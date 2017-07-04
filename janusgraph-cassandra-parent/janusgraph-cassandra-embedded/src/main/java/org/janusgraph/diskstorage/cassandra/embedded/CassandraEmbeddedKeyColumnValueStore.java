@@ -52,7 +52,7 @@ import javax.annotation.Nullable;
 
 import java.nio.ByteBuffer;
 import java.util.*;
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
 
 public class CassandraEmbeddedKeyColumnValueStore implements KeyColumnValueStore {
 
@@ -175,7 +175,8 @@ public class CassandraEmbeddedKeyColumnValueStore implements KeyColumnValueStore
                 false, query.getLimit() + (query.hasLimit()?1:0));
         ReadCommand sliceCmd = new SliceFromReadCommand(keyspace, query.getKey().asByteBuffer(), columnFamily, nowMillis, sqf);
 
-        List<Row> slice = read(sliceCmd, getTx(txh).getReadConsistencyLevel().getDB());
+        CassandraEmbeddedTransaction tx = getTx(txh);
+		List<Row> slice = read(sliceCmd, tx.getReadConsistencyLevel());
 
         if (null == slice || 0 == slice.size())
             return EntryList.EMPTY_LIST;

@@ -36,9 +36,11 @@ import com.netflix.astyanax.ddl.ColumnFamilyDefinition;
 import com.netflix.astyanax.ddl.KeyspaceDefinition;
 import com.netflix.astyanax.impl.AstyanaxConfigurationImpl;
 import com.netflix.astyanax.model.ColumnFamily;
+import com.netflix.astyanax.model.ConsistencyLevel;
 import com.netflix.astyanax.retry.RetryPolicy;
 import com.netflix.astyanax.thrift.ThriftFamilyFactory;
 import org.janusgraph.diskstorage.BackendException;
+import org.janusgraph.diskstorage.BaseTransactionConfig;
 import org.janusgraph.diskstorage.Entry;
 import org.janusgraph.diskstorage.EntryMetaData;
 import org.janusgraph.diskstorage.PermanentBackendException;
@@ -53,9 +55,6 @@ import org.janusgraph.diskstorage.keycolumnvalue.KCVMutation;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyRange;
 import org.janusgraph.diskstorage.keycolumnvalue.StoreTransaction;
 import org.janusgraph.graphdb.configuration.PreInitializeConfigOptions;
-import org.apache.cassandra.dht.IPartitioner;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.cassandra.utils.FBUtilities;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +64,9 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import java.util.function.Function;
+
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
 
 @PreInitializeConfigOptions
 public class AstyanaxStoreManager extends AbstractCassandraStoreManager {
@@ -313,17 +314,31 @@ public class AstyanaxStoreManager extends AbstractCassandraStoreManager {
     }
 
     @Override
-    public IPartitioner getCassandraPartitioner() throws BackendException {
-        Cluster cl = clusterContext.getClient();
+    protected Partitioner doGetPartitioner() throws BackendException {
         try {
-            return FBUtilities.newPartitioner(cl.describePartitioner());
-        } catch (ConnectionException e) {
+            String partitionerClass = clusterContext.getClient().describePartitioner();
+            switch(partitionerClass) {
+                case "org.apache.cassandra.dht.Murmur3Partitioner":
+                case "org.apache.cassandra.dht.RandomPartitioner": {
+                    return Partitioner.RANDOM;
+                }
+                case "org.apache.cassandra.dht.ByteOrderedPartitioner": {
+                    return Partitioner.BYTEORDER;
+                }
+                default: {
+                    throw new IllegalArgumentException("Unsupported partitioner: " + partitionerClass);
+                }
+            }        
+         } catch (ConnectionException e) {
             throw new TemporaryBackendException(e);
-        } catch (ConfigurationException e) {
-            throw new PermanentBackendException(e);
         }
     }
-
+    
+    @Override
+    public StoreTransaction beginTransaction(BaseTransactionConfig config) throws BackendException {
+        return new AstyanaxTransaction(config);
+    }
+        
     @Override
     public String toString() {
         return "astyanax" + super.toString();
@@ -350,8 +365,9 @@ public class AstyanaxStoreManager extends AbstractCassandraStoreManager {
 
     @Override
     public void mutateMany(Map<String, Map<StaticBuffer, KCVMutation>> batch, StoreTransaction txh) throws BackendException {
+        final AstyanaxTransaction tx = getTx(txh);
         MutationBatch m = keyspaceContext.getClient().prepareMutationBatch().withAtomicBatch(atomicBatch)
-                .setConsistencyLevel(getTx(txh).getWriteConsistencyLevel().getAstyanax())
+                .setConsistencyLevel(tx.getWriteConsistencyLevel())
                 .withRetryPolicy(retryPolicy.duplicate());
 
         final MaskedTimestamp commitTime = new MaskedTimestamp(txh);
@@ -686,5 +702,3 @@ public class AstyanaxStoreManager extends AbstractCassandraStoreManager {
         }
     }
 }
-
-

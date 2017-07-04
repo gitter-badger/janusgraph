@@ -21,6 +21,7 @@ import com.netflix.astyanax.Keyspace;
 import com.netflix.astyanax.connectionpool.OperationResult;
 import com.netflix.astyanax.connectionpool.exceptions.ConnectionException;
 import com.netflix.astyanax.model.*;
+import com.netflix.astyanax.model.ConsistencyLevel;
 import com.netflix.astyanax.query.AllRowsQuery;
 import com.netflix.astyanax.query.RowSliceQuery;
 import com.netflix.astyanax.retry.RetryPolicy;
@@ -37,7 +38,7 @@ import java.nio.ByteBuffer;
 import java.util.*;
 
 import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.Partitioner;
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
 
 public class AstyanaxKeyColumnValueStore implements KeyColumnValueStore {
 
@@ -110,8 +111,9 @@ public class AstyanaxKeyColumnValueStore implements KeyColumnValueStore {
          * hard-coded, and dies.
          *
          */
+        AstyanaxTransaction tx = getTx(txh);
         RowSliceQuery rq = keyspace.prepareQuery(columnFamily)
-                .setConsistencyLevel(getTx(txh).getReadConsistencyLevel().getAstyanax())
+                .setConsistencyLevel(tx.getReadConsistencyLevel())
                 .withRetryPolicy(retryPolicy.duplicate())
                 .getKeySlice(CassandraHelper.convert(keys));
 
@@ -243,8 +245,9 @@ public class AstyanaxKeyColumnValueStore implements KeyColumnValueStore {
 
         ByteBuffer start = query.getKeyStart().asByteBuffer(), end = query.getKeyEnd().asByteBuffer();
 
+        AstyanaxTransaction tx = getTx(txh);
         RowSliceQuery rowSlice = keyspace.prepareQuery(columnFamily)
-                .setConsistencyLevel(getTx(txh).getReadConsistencyLevel().getAstyanax())
+                .setConsistencyLevel(tx.getReadConsistencyLevel())
                 .withRetryPolicy(retryPolicy.duplicate())
                 .getKeyRange(start, end, null, null, Integer.MAX_VALUE);
 

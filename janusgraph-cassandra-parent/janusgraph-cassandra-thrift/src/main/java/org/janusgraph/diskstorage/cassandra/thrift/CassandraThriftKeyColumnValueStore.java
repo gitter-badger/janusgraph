@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
 
 /**
  * A JanusGraph {@code KeyColumnValueStore} backed by Cassandra.
@@ -111,9 +111,9 @@ public class CassandraThriftKeyColumnValueStore implements KeyColumnValueStore {
         ColumnParent parent = new ColumnParent(columnFamily);
         /*
          * Cassandra cannot handle columnStart = columnEnd.
-		 * Cassandra's Thrift getSlice() throws InvalidRequestException
-		 * if columnStart = columnEnd.
-		 */
+         * Cassandra's Thrift getSlice() throws InvalidRequestException
+         * if columnStart = columnEnd.
+         */
         if (query.getSliceStart().compareTo(query.getSliceEnd()) >= 0) {
             // Check for invalid arguments where columnEnd < columnStart
             if (query.getSliceEnd().compareTo(query.getSliceStart())<0) {
@@ -128,7 +128,8 @@ public class CassandraThriftKeyColumnValueStore implements KeyColumnValueStore {
         }
 
         assert query.getSliceStart().compareTo(query.getSliceEnd()) < 0;
-        ConsistencyLevel consistency = getTx(txh).getReadConsistencyLevel().getThrift();
+        CassandraThriftTransaction tx = getTx(txh);
+        ConsistencyLevel consistency = tx.getReadConsistencyLevel();
         SlicePredicate predicate = new SlicePredicate();
         SliceRange range = new SliceRange();
         range.setCount(query.getLimit() + (query.hasLimit()?1:0)); //Add one for potentially removed last column
@@ -145,11 +146,11 @@ public class CassandraThriftKeyColumnValueStore implements KeyColumnValueStore {
                     predicate,
                     consistency);
 
-			/*
-			 * The final size of the "result" List may be at most rows.size().
-			 * However, "result" could also be up to two elements smaller than
-			 * rows.size(), depending on startInclusive and endInclusive
-			 */
+            /*
+             * The final size of the "result" List may be at most rows.size().
+             * However, "result" could also be up to two elements smaller than
+             * rows.size(), depending on startInclusive and endInclusive
+             */
             Map<StaticBuffer, EntryList> results = new HashMap<StaticBuffer, EntryList>();
 
             for (ByteBuffer key : rows.keySet()) {

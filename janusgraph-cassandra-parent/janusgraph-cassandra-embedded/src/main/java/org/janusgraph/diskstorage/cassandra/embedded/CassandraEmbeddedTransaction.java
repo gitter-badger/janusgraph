@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.janusgraph.diskstorage.cassandra;
+package org.janusgraph.diskstorage.cassandra.embedded;
 
-public interface CLevelInterface {
+import org.apache.cassandra.db.ConsistencyLevel;
+import org.janusgraph.diskstorage.BaseTransactionConfig;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction;
 
-    public org.apache.cassandra.db.ConsistencyLevel     getDB();
+public class CassandraEmbeddedTransaction extends AbstractCassandraTransaction<ConsistencyLevel> {
 
-    public org.apache.cassandra.thrift.ConsistencyLevel getThrift();
-
-    public com.netflix.astyanax.model.ConsistencyLevel  getAstyanax();
+    public CassandraEmbeddedTransaction(BaseTransactionConfig config) {
+        super(config, cl -> ConsistencyLevel.valueOf(cl));
+    }
 }
+

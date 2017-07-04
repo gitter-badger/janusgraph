@@ -15,6 +15,7 @@
 package org.janusgraph.diskstorage.cassandra;
 
 import java.util.*;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableMap;
 import org.janusgraph.core.JanusGraphException;
@@ -34,8 +35,6 @@ import org.janusgraph.graphdb.configuration.PreInitializeConfigOptions;
 
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.*;
 
-import org.apache.cassandra.dht.IPartitioner;
-
 /**
  * @author Matthias Broecheler (me@matthiasb.com)
  */
@@ -43,19 +42,8 @@ import org.apache.cassandra.dht.IPartitioner;
 public abstract class AbstractCassandraStoreManager extends DistributedStoreManager implements KeyColumnValueStoreManager {
 
     public enum Partitioner {
-
-        RANDOM, BYTEORDER;
-
-        public static Partitioner getPartitioner(IPartitioner partitioner) {
-            return getPartitioner(partitioner.getClass().getSimpleName());
-        }
-
-        public static Partitioner getPartitioner(String className) {
-            if (className.endsWith("RandomPartitioner") || className.endsWith("Murmur3Partitioner"))
-                return Partitioner.RANDOM;
-            else if (className.endsWith("ByteOrderedPartitioner")) return Partitioner.BYTEORDER;
-            else throw new IllegalArgumentException("Unsupported partitioner: " + className);
-        }
+        RANDOM,
+        BYTEORDER;
     }
 
     //################### CASSANDRA SPECIFIC CONFIGURATION OPTIONS ######################
@@ -231,7 +219,7 @@ public abstract class AbstractCassandraStoreManager extends DistributedStoreMana
     public final Partitioner getPartitioner() {
         if (partitioner == null) {
             try {
-                partitioner = Partitioner.getPartitioner(getCassandraPartitioner());
+                partitioner = doGetPartitioner();
             } catch (BackendException e) {
                 throw new JanusGraphException("Could not connect to Cassandra to read partitioner information. Please check the connection", e);
             }
@@ -240,13 +228,8 @@ public abstract class AbstractCassandraStoreManager extends DistributedStoreMana
         return partitioner;
     }
 
-    public abstract IPartitioner getCassandraPartitioner() throws BackendException;
-
-    @Override
-    public StoreTransaction beginTransaction(final BaseTransactionConfig config) {
-        return new CassandraTransaction(config);
-    }
-
+    protected abstract Partitioner doGetPartitioner() throws BackendException;
+    
     @Override
     public String toString() {
         return "[" + keySpaceName + "@" + super.toString() + "]";

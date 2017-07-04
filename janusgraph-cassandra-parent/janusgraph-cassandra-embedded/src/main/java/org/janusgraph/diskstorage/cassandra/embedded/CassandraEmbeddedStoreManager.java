@@ -14,11 +14,12 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
 
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 import org.janusgraph.diskstorage.*;
 import org.janusgraph.diskstorage.cassandra.utils.CassandraHelper;
@@ -58,6 +59,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.Partitioner;
 import org.janusgraph.diskstorage.cassandra.utils.CassandraDaemonWrapper;
 
 public class CassandraEmbeddedStoreManager extends AbstractCassandraStoreManager {
@@ -103,14 +105,30 @@ public class CassandraEmbeddedStoreManager extends AbstractCassandraStoreManager
     }
 
     @Override
-    public IPartitioner getCassandraPartitioner()
-            throws BackendException {
+    protected Partitioner doGetPartitioner() throws BackendException {
+        IPartitioner cassandraPartitioner = getCassandraPartitioner();
+        String className = cassandraPartitioner.getClass().getName();
+        if (className.endsWith("RandomPartitioner") || className.endsWith("Murmur3Partitioner")) {
+            return Partitioner.RANDOM;
+        } else if (className.endsWith("ByteOrderedPartitioner")) { 
+            return Partitioner.BYTEORDER; 
+        } else { 
+            throw new IllegalArgumentException("Unsupported partitioner: " + className);
+        }
+    }
+    
+    IPartitioner getCassandraPartitioner() throws BackendException {
         try {
             return StorageService.getPartitioner();
         } catch (Exception e) {
             log.warn("Could not read local token range: {}", e);
             throw new PermanentBackendException("Could not read partitioner information on cluster", e);
         }
+    }
+
+    @Override
+    public StoreTransaction beginTransaction(BaseTransactionConfig config) throws BackendException {
+        return new CassandraEmbeddedTransaction(config);
     }
 
     @Override
@@ -152,7 +170,7 @@ public class CassandraEmbeddedStoreManager extends AbstractCassandraStoreManager
         List<KeyRange> keyRanges = new ArrayList<KeyRange>(ranges.size());
 
         for (Range<Token> range : ranges) {
-            keyRanges.add(CassandraHelper.transformRange(range));
+            keyRanges.add(Tokens.transformRange(range));
         }
 
         return keyRanges;
@@ -210,7 +228,8 @@ public class CassandraEmbeddedStoreManager extends AbstractCassandraStoreManager
             }
         }
 
-        mutate(new ArrayList<org.apache.cassandra.db.Mutation>(rowMutations.values()), getTx(txh).getWriteConsistencyLevel().getDB());
+        CassandraEmbeddedTransaction tx = getTx(txh);
+        mutate(new ArrayList<org.apache.cassandra.db.Mutation>(rowMutations.values()), tx.getWriteConsistencyLevel());
 
         sleepAfterWrite(txh, commitTime);
     }

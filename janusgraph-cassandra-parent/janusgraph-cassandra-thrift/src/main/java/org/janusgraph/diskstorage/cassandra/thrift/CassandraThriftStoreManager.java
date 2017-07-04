@@ -14,7 +14,8 @@
 
 package org.janusgraph.diskstorage.cassandra.thrift;
 
-import static org.janusgraph.diskstorage.cassandra.CassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraTransaction.getTx;
+import static org.janusgraph.diskstorage.cassandra.thrift.Tokens.*;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -22,7 +23,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import org.janusgraph.diskstorage.EntryMetaData;
+import java.util.function.Function;
+
 import org.janusgraph.diskstorage.*;
 import org.janusgraph.diskstorage.cassandra.utils.CassandraHelper;
 import org.janusgraph.diskstorage.configuration.ConfigElement;
@@ -46,8 +48,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import org.janusgraph.diskstorage.BackendException;
+
 import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.Partitioner;
 import org.janusgraph.diskstorage.cassandra.thrift.thriftpool.CTConnection;
 import org.janusgraph.diskstorage.cassandra.thrift.thriftpool.CTConnectionFactory;
 import org.janusgraph.diskstorage.cassandra.thrift.thriftpool.CTConnectionPool;
@@ -210,7 +213,19 @@ public class CassandraThriftStoreManager extends AbstractCassandraStoreManager {
     }
 
     @Override
-    public IPartitioner getCassandraPartitioner() throws BackendException {
+    protected Partitioner doGetPartitioner() throws BackendException {
+        IPartitioner cassandraPartitioner = getCassandraPartitioner();
+        String className = cassandraPartitioner.getClass().getName();
+        if (className.endsWith("RandomPartitioner") || className.endsWith("Murmur3Partitioner")) {
+            return Partitioner.RANDOM;
+        } else if (className.endsWith("ByteOrderedPartitioner")) { 
+            return Partitioner.BYTEORDER; 
+        } else { 
+            throw new IllegalArgumentException("Unsupported partitioner: " + className);
+        }
+    }
+    
+    IPartitioner getCassandraPartitioner() throws BackendException {
         CTConnection conn = null;
         try {
             conn = pool.borrowObject(SYSTEM_KS);
@@ -222,6 +237,11 @@ public class CassandraThriftStoreManager extends AbstractCassandraStoreManager {
         }
     }
 
+    @Override
+    public StoreTransaction beginTransaction(BaseTransactionConfig config) throws BackendException {
+        return new CassandraThriftTransaction(config);
+    }
+    
     @Override
     public String toString() {
         return "thriftCassandra" + super.toString();
@@ -239,7 +259,8 @@ public class CassandraThriftStoreManager extends AbstractCassandraStoreManager {
 
         final MaskedTimestamp commitTime = new MaskedTimestamp(txh);
 
-        ConsistencyLevel consistency = getTx(txh).getWriteConsistencyLevel().getThrift();
+        CassandraThriftTransaction tx = getTx(txh);
+        ConsistencyLevel consistency = tx.getWriteConsistencyLevel();
 
         // Generate Thrift-compatible batch_mutate() datastructure
         // key -> cf -> cassmutation
@@ -355,7 +376,7 @@ public class CassandraThriftStoreManager extends AbstractCassandraStoreManager {
                 if (!NetworkUtil.hasLocalAddress(range.endpoints))
                     continue;
 
-                keyRanges.add(CassandraHelper.transformRange(tokenFactory.fromString(range.start_token), tokenFactory.fromString(range.end_token)));
+                keyRanges.add(transformRange(tokenFactory.fromString(range.start_token), tokenFactory.fromString(range.end_token)));
             }
 
             return keyRanges;
