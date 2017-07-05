@@ -42,6 +42,7 @@ public abstract class DistributedStoreManagerTest<T extends DistributedStoreMana
     @Test
     @Category({ OrderedKeyStoreTests.class })
     public void testGetLocalKeyPartition() throws BackendException {
+        assumeTrue("Store is ordered", this.manager.getFeatures().isKeyOrdered());
         assumeTrue(manager.getFeatures().hasLocalKeyPartition());
         List<KeyRange> local = manager.getLocalKeyPartition();
         assertNotNull(local);

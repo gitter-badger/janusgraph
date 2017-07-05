@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.cassandra.service.CassandraDaemon;
 import org.apache.commons.io.FileUtils;
+import org.janusgraph.diskstorage.configuration.ConfigElement;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class CassandraInitialiser {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(CassandraInitialiser.class);
 
+    public static final String HOSTNAME = System.getProperty(ConfigElement.getPath(STORAGE_HOSTS));
+
     public static AtomicBoolean INITIALISED = new AtomicBoolean(false);
 
     public static void initialiseCassandra(Class<?> testClass) {
@@ -52,6 +55,10 @@ public class CassandraInitialiser {
     }
 
     public static void initialiseCassandra(Class<?> testClass, boolean startCassandra) {
+        if (!startCassandra || HOSTNAME != null) {
+            return;
+        }
+
         synchronized (CassandraInitialiser.class) {
             if (INITIALISED.get()) {
                 return;
@@ -167,7 +174,6 @@ public class CassandraInitialiser {
             @Override
             public ModifiableConfiguration merge(Class<?> testClass, ModifiableConfiguration configuration) throws Exception {
                 super.merge(testClass, configuration);
-                configuration.set(STORAGE_HOSTS, new String[] { "localhost" });
                 configuration.set(SSL_ENABLED, true);
                 configuration.set(SSL_TRUSTSTORE_LOCATION, Paths.get(getCassandraDir(testClass).getAbsolutePath(), "conf", "test.truststore").toFile().getAbsolutePath());
                 configuration.set(SSL_TRUSTSTORE_PASSWORD, "cassandra");
@@ -179,8 +185,8 @@ public class CassandraInitialiser {
 
         public ModifiableConfiguration merge(Class<?> testClass, ModifiableConfiguration config) throws Exception {
             config.set(STORAGE_CONF_FILE, getCassandraConfFile(getCassandraDir(testClass)).getAbsolutePath());
+            config.set(STORAGE_HOSTS, new String[] { HOSTNAME != null ? HOSTNAME : "127.0.0.1" });
             return config;
         }
-
     }
 }

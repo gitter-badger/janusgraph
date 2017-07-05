@@ -36,7 +36,7 @@ import org.apache.cassandra.dht.Token;
 import javax.annotation.Nullable;
 
 public class Tokens {
-    
+
     public static KeyRange transformRange(Range<Token> range) {
         return transformRange(range.left, range.right);
     }
@@ -58,7 +58,7 @@ public class Tokens {
         Preconditions.checkArgument(leftTokenValue.length == rightTokenValue.length, "Tokens have unequal length");
         int tokenLength = leftTokenValue.length;
 
-        byte[][] tokens = new byte[][]{leftTokenValue, rightTokenValue};
+        byte[][] tokens = new byte[][] { leftTokenValue, rightTokenValue };
         byte[][] plusOne = new byte[2][tokenLength];
 
         for (int j = 0; j < 2; j++) {
@@ -67,9 +67,8 @@ public class Tokens {
                 byte b = tokens[j][i];
                 if (carry) {
                     b++;
-                    carry = false;
+                    carry = (b == 0);
                 }
-                if (b == 0) carry = true;
                 plusOne[j][i] = b;
             }
         }
