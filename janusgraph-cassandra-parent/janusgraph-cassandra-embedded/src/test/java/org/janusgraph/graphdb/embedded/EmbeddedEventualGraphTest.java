@@ -14,22 +14,23 @@
 
 package org.janusgraph.graphdb.embedded;
 
-import org.junit.BeforeClass;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 
-import org.janusgraph.CassandraStorageSetup;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.graphdb.JanusGraphEventualGraphTest;
+import org.junit.BeforeClass;
 
 public class EmbeddedEventualGraphTest extends JanusGraphEventualGraphTest {
 
     @BeforeClass
     public static void startEmbeddedCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(EmbeddedEventualGraphTest.class, false);
     }
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return CassandraStorageSetup.getEmbeddedCassandraPartitionGraphConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED).getConfiguration();
     }
-
 }

@@ -14,25 +14,29 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
 import org.janusgraph.diskstorage.BackendException;
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
-
-import org.janusgraph.CassandraStorageSetup;
+import org.janusgraph.diskstorage.IDAuthorityTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
+import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
-import org.janusgraph.diskstorage.log.KCVSLogTest;
-import org.janusgraph.testcategory.SerialTests;
+import org.junit.BeforeClass;
 
-@Category(SerialTests.class)
-public class EmbeddedLogTest extends KCVSLogTest {
+public class EmbeddedIDAuthorityTest extends IDAuthorityTest {
+
+    public EmbeddedIDAuthorityTest(WriteConfiguration baseConfig) {
+        super(baseConfig);
+    }
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(EmbeddedIDAuthorityTest.class, false);
     }
 
     @Override
     public KeyColumnValueStoreManager openStorageManager() throws BackendException {
-        return new CassandraEmbeddedStoreManager(CassandraStorageSetup.getEmbeddedConfiguration(getClass().getSimpleName()));
+        return new CassandraEmbeddedStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED));
     }
 }

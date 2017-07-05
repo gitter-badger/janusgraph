@@ -14,20 +14,27 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
-import org.janusgraph.CassandraStorageSetup;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
 import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.IDAuthorityTest;
-import org.janusgraph.diskstorage.configuration.WriteConfiguration;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
+import org.janusgraph.diskstorage.log.KCVSLogTest;
+import org.janusgraph.testcategory.SerialTests;
+import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 
-public class EmbeddedIDAuthorityTest extends IDAuthorityTest {
+@Category(SerialTests.class)
+public class EmbeddedLogTest extends KCVSLogTest {
 
-    public EmbeddedIDAuthorityTest(WriteConfiguration baseConfig) {
-        super(baseConfig);
+    @BeforeClass
+    public static void startCassandra() {
+        initialiseCassandra(EmbeddedLogTest.class, false);
     }
 
     @Override
     public KeyColumnValueStoreManager openStorageManager() throws BackendException {
-        return new CassandraEmbeddedStoreManager(CassandraStorageSetup.getEmbeddedConfiguration(getClass().getSimpleName()));
+        return new CassandraEmbeddedStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED));
     }
 }

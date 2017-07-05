@@ -14,31 +14,31 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 import org.janusgraph.diskstorage.BackendException;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreTest;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import org.janusgraph.diskstorage.keycolumnvalue.StoreFeatures;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-
-import org.janusgraph.CassandraStorageSetup;
-import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreTest;
-import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
-import org.janusgraph.diskstorage.keycolumnvalue.StoreFeatures;
-import org.janusgraph.testcategory.OrderedKeyStoreTests;
 
 public class EmbeddedStoreTest extends AbstractCassandraStoreTest {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(EmbeddedStoreTest.class, false);
     }
 
     @Override
     public ModifiableConfiguration getBaseStorageConfiguration() {
-        return CassandraStorageSetup.getEmbeddedConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class EmbeddedStoreTest extends AbstractCassandraStoreTest {
     }
 
     @Test
-    @Category({ OrderedKeyStoreTests.class })
     public void testConfiguration() {
+        assumeTrue("Store is ordered", this.manager.getFeatures().isKeyOrdered());
         StoreFeatures features = manager.getFeatures();
         assertTrue(features.isKeyOrdered());
         assertTrue(features.hasLocalKeyPartition());

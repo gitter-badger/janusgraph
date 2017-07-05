@@ -14,7 +14,10 @@
 
 package org.janusgraph.graphdb.embedded;
 
-import org.janusgraph.CassandraStorageSetup;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.graphdb.JanusGraphPartitionGraphTest;
 import org.junit.BeforeClass;
@@ -23,12 +26,12 @@ public class EmbeddedPartitionGraphTest extends JanusGraphPartitionGraphTest {
 
     @BeforeClass
     public static void startEmbeddedCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(EmbeddedPartitionGraphTest.class, false);
     }
 
     @Override
     public WriteConfiguration getBaseConfiguration() {
-        return CassandraStorageSetup.getEmbeddedCassandraPartitionGraphConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED).getConfiguration();
     }
 
 }

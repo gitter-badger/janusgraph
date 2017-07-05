@@ -14,16 +14,24 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
-import org.janusgraph.diskstorage.BackendException;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 
-import org.janusgraph.CassandraStorageSetup;
+import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.MultiWriteKeyColumnValueStoreTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
+import org.junit.BeforeClass;
 
 public class EmbeddedMultiWriteStoreTest extends MultiWriteKeyColumnValueStoreTest {
 
+    @BeforeClass
+    public static void startCassandra() {
+        initialiseCassandra(EmbeddedMultiWriteStoreTest.class, false);
+    }
+
     @Override
     public KeyColumnValueStoreManager openStorageManager() throws BackendException {
-        return new CassandraEmbeddedStoreManager(CassandraStorageSetup.getEmbeddedConfiguration(getClass().getSimpleName()));
+        return new CassandraEmbeddedStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED));
     }
 }

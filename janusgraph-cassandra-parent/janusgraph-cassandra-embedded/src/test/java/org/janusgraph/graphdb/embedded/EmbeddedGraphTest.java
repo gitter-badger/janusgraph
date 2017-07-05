@@ -14,29 +14,23 @@
 
 package org.janusgraph.graphdb.embedded;
 
-import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 
-import org.janusgraph.CassandraStorageSetup;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.graphdb.JanusGraphConcurrentTest;
-import org.janusgraph.testcategory.PerformanceTests;
+import org.janusgraph.graphdb.CassandraGraphTest;
+import org.junit.BeforeClass;
 
-/**
- * @author Matthias Broecheler (me@matthiasb.com)
- */
-
-@Category({PerformanceTests.class})
-public class EmbeddedGraphConcurrentTest extends JanusGraphConcurrentTest {
+public class EmbeddedGraphTest extends CassandraGraphTest {
 
     @BeforeClass
-    public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+    public static void startEmbeddedCassandra() {
+        initialiseCassandra(EmbeddedGraphTest.class, false);
     }
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return CassandraStorageSetup.getEmbeddedCassandraPartitionGraphConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_EMBEDDED).getConfiguration();
     }
-
 }
