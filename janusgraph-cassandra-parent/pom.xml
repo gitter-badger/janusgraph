@@ -17,6 +17,7 @@
         <module>janusgraph-cassandra-core</module>
         <module>janusgraph-cassandra-cql</module>
         <module>janusgraph-cassandra-embedded</module>
+        <module>janusgraph-cassandra-test</module>
         <module>janusgraph-cassandra-thrift</module>
     </modules>
 </project>

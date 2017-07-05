@@ -14,7 +14,9 @@
 
 package org.janusgraph.diskstorage.cassandra;
 
-import com.google.common.base.Preconditions;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
+import static org.junit.Assert.assertEquals;
+
 import org.janusgraph.diskstorage.BaseTransactionConfig;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.janusgraph.diskstorage.util.StandardBaseTransactionConfig;
@@ -22,11 +24,21 @@ import org.janusgraph.diskstorage.util.time.TimestampProviders;
 import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
 import org.junit.Test;
 
-import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.CASSANDRA_READ_CONSISTENCY;
-import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.CASSANDRA_WRITE_CONSISTENCY;
-import static org.junit.Assert.*;
+import com.google.common.base.Preconditions;
 
 public class CassandraTransactionTest {
+
+    public enum ConsistencyLevel {
+        ANY,
+        ONE,
+        TWO,
+        THREE,
+        QUORUM,
+        ALL,
+        LOCAL_ONE,
+        LOCAL_QUORUM,
+        EACH_QUORUM;
+    }
 
     /* testRead/WriteConsistencyLevel have unnecessary code duplication
      * that could be avoided by creating a common helper method that takes
@@ -41,13 +53,13 @@ public class CassandraTransactionTest {
         int levelsChecked = 0;
 
         // Test whether CassandraTransaction honors the write consistency level option
-        for (CLevel writeLevel : CLevel.values()) {
-            StandardBaseTransactionConfig.Builder b = new StandardBaseTransactionConfig.Builder();
-            ModifiableConfiguration mc = GraphDatabaseConfiguration.buildGraphConfiguration();
+        for (final ConsistencyLevel writeLevel : ConsistencyLevel.values()) {
+            final StandardBaseTransactionConfig.Builder b = new StandardBaseTransactionConfig.Builder();
+            final ModifiableConfiguration mc = GraphDatabaseConfiguration.buildGraphConfiguration();
             mc.set(CASSANDRA_WRITE_CONSISTENCY, writeLevel.name());
             b.customOptions(mc);
             b.timestampProvider(TimestampProviders.MICRO);
-            CassandraTransaction ct = new CassandraTransaction(b.build());
+            final AbstractCassandraTransaction ct = new TestCassandraTransaction(b.build());
             assertEquals(writeLevel, ct.getWriteConsistencyLevel());
             levelsChecked++;
         }
@@ -61,13 +73,13 @@ public class CassandraTransactionTest {
         int levelsChecked = 0;
 
         // Test whether CassandraTransaction honors the write consistency level option
-        for (CLevel writeLevel : CLevel.values()) {
-            StandardBaseTransactionConfig.Builder b = new StandardBaseTransactionConfig.Builder();
-            ModifiableConfiguration mc = GraphDatabaseConfiguration.buildGraphConfiguration();
+        for (final ConsistencyLevel writeLevel : ConsistencyLevel.values()) {
+            final StandardBaseTransactionConfig.Builder b = new StandardBaseTransactionConfig.Builder();
+            final ModifiableConfiguration mc = GraphDatabaseConfiguration.buildGraphConfiguration();
             mc.set(CASSANDRA_READ_CONSISTENCY, writeLevel.name());
             b.timestampProvider(TimestampProviders.MICRO);
             b.customOptions(mc);
-            CassandraTransaction ct = new CassandraTransaction(b.build());
+            final AbstractCassandraTransaction ct = new TestCassandraTransaction(b.build());
             assertEquals(writeLevel, ct.getReadConsistencyLevel());
             levelsChecked++;
         }
@@ -79,15 +91,22 @@ public class CassandraTransactionTest {
     @Test
     public void testTimestampProvider() {
         BaseTransactionConfig txcfg = StandardBaseTransactionConfig.of(TimestampProviders.NANO);
-        CassandraTransaction ct = new CassandraTransaction(txcfg);
+        AbstractCassandraTransaction ct = new TestCassandraTransaction(txcfg);
         assertEquals(TimestampProviders.NANO, ct.getConfiguration().getTimestampProvider());
 
         txcfg = StandardBaseTransactionConfig.of(TimestampProviders.MICRO);
-        ct = new CassandraTransaction(txcfg);
+        ct = new TestCassandraTransaction(txcfg);
         assertEquals(TimestampProviders.MICRO, ct.getConfiguration().getTimestampProvider());
 
         txcfg = StandardBaseTransactionConfig.of(TimestampProviders.MILLI);
-        ct = new CassandraTransaction(txcfg);
+        ct = new TestCassandraTransaction(txcfg);
         assertEquals(TimestampProviders.MILLI, ct.getConfiguration().getTimestampProvider());
+    }
+    
+    public static class TestCassandraTransaction extends AbstractCassandraTransaction<ConsistencyLevel> {
+
+        public TestCassandraTransaction(BaseTransactionConfig config) {
+            super(config, cl -> ConsistencyLevel.valueOf(cl));
+        }
     }
 }
