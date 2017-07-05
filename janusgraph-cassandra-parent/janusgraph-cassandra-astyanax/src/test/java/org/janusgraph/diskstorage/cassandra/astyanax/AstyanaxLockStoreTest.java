@@ -14,23 +14,25 @@
 
 package org.janusgraph.diskstorage.cassandra.astyanax;
 
-import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.configuration.Configuration;
-import org.junit.BeforeClass;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 
-import org.janusgraph.CassandraStorageSetup;
+import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.LockKeyColumnValueStoreTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
+import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
+import org.junit.BeforeClass;
 
 public class AstyanaxLockStoreTest extends LockKeyColumnValueStoreTest {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(AstyanaxLockStoreTest.class);
     }
 
     @Override
-    public KeyColumnValueStoreManager openStorageManager(int idx, Configuration configuration) throws BackendException {
-        return new AstyanaxStoreManager(CassandraStorageSetup.getAstyanaxConfiguration(getClass().getSimpleName()));
+    public KeyColumnValueStoreManager openStorageManager(int idx, final Configuration configuration) throws BackendException {
+        return new AstyanaxStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_ASTYANAX));
     }
 }

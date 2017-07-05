@@ -14,14 +14,23 @@
 
 package org.janusgraph.graphdb.astyanax;
 
-import org.janusgraph.CassandraStorageSetup;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.graphdb.CassandraGraphTest;
+import org.junit.BeforeClass;
 
 public class AstyanaxGraphTest extends CassandraGraphTest {
 
+    @BeforeClass
+    public static void beforeClass() {
+        initialiseCassandra(AstyanaxGraphTest.class);
+    }
+
     @Override
     public WriteConfiguration getConfiguration() {
-        return CassandraStorageSetup.getAstyanaxGraphConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_ASTYANAX).getConfiguration();
     }
 }

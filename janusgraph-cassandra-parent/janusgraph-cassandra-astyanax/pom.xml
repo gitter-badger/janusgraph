@@ -52,5 +52,12 @@
             <artifactId>astyanax-recipes</artifactId>
             <version>${astyanax.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

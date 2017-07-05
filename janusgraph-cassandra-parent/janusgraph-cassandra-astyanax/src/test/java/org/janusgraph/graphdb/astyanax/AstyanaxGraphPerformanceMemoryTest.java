@@ -14,25 +14,24 @@
 
 package org.janusgraph.graphdb.astyanax;
 
-import org.janusgraph.CassandraStorageSetup;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.graphdb.JanusGraphConcurrentTest;
-import org.janusgraph.testcategory.PerformanceTests;
-
+import org.janusgraph.graphdb.JanusGraphPerformanceMemoryTest;
 import org.junit.BeforeClass;
-import org.junit.experimental.categories.Category;
 
-@Category({PerformanceTests.class})
-public class AstyanaxGraphConcurrentTest extends JanusGraphConcurrentTest {
+public class AstyanaxGraphPerformanceMemoryTest extends JanusGraphPerformanceMemoryTest {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(AstyanaxGraphPerformanceMemoryTest.class);
     }
-
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return CassandraStorageSetup.getAstyanaxGraphConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_ASTYANAX).getConfiguration();
     }
+
 }

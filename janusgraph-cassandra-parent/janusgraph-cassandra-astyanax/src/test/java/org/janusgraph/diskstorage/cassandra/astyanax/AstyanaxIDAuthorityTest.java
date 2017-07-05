@@ -14,22 +14,29 @@
 
 package org.janusgraph.diskstorage.cassandra.astyanax;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
 import org.janusgraph.diskstorage.BackendException;
+import org.janusgraph.diskstorage.IDAuthorityTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
+import org.janusgraph.diskstorage.configuration.WriteConfiguration;
+import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
 import org.junit.BeforeClass;
 
-import org.janusgraph.CassandraStorageSetup;
-import org.janusgraph.diskstorage.MultiWriteKeyColumnValueStoreTest;
-import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
+public class AstyanaxIDAuthorityTest extends IDAuthorityTest {
 
-public class AstyanaxMultiWriteStoreTest extends MultiWriteKeyColumnValueStoreTest {
+    public AstyanaxIDAuthorityTest(WriteConfiguration baseConfig) {
+        super(baseConfig);
+    }
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(AstyanaxIDAuthorityTest.class);
     }
 
     @Override
     public KeyColumnValueStoreManager openStorageManager() throws BackendException {
-        return new AstyanaxStoreManager(CassandraStorageSetup.getAstyanaxConfiguration(getClass().getSimpleName()));
+        return new AstyanaxStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_ASTYANAX));
     }
 }

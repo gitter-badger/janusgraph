@@ -14,8 +14,10 @@
 
 package org.janusgraph.diskstorage.cassandra.astyanax;
 
-import org.janusgraph.CassandraStorageSetup;
-import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.*;
+import static org.junit.Assert.assertTrue;
+
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser.CassandraConfiguration;
 import org.janusgraph.testcategory.CassandraSSLTests;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -25,11 +27,7 @@ public class AstyanaxSSLStoreTest extends AstyanaxStoreTest {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
-    }
-
-    @Override
-    public ModifiableConfiguration getBaseStorageConfiguration() {
-        return CassandraStorageSetup.getAstyanaxSSLConfiguration(getClass().getSimpleName());
+        initialiseCassandra(AstyanaxSSLStoreTest.class);
+        assertTrue("Cassandra is not running with SSL configured", CassandraConfiguration.UNORDERED_SSL == getCassandraConfiguration());
     }
 }

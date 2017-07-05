@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.janusgraph.diskstorage.cassandra.astyanax;
+package org.janusgraph.graphdb.astyanax;
 
-import org.janusgraph.CassandraStorageSetup;
-import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.IDAuthorityTest;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
+import org.janusgraph.graphdb.JanusGraphPartitionGraphTest;
 import org.junit.BeforeClass;
 
-public class AstyanaxIDAuthorityTest extends IDAuthorityTest {
-
-    public AstyanaxIDAuthorityTest(WriteConfiguration baseConfig) {
-        super(baseConfig);
-    }
+public class AstyanaxPartitionGraphTest extends JanusGraphPartitionGraphTest {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(AstyanaxPartitionGraphTest.class);
     }
 
     @Override
-    public KeyColumnValueStoreManager openStorageManager() throws BackendException {
-        return new AstyanaxStoreManager(CassandraStorageSetup.getAstyanaxConfiguration(getClass().getSimpleName()));
+    public WriteConfiguration getBaseConfiguration() {
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CASSANDRA_ASTYANAX).getConfiguration();
     }
+
 }
