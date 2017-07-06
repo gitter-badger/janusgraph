@@ -56,6 +56,11 @@ public abstract class AbstractCassandraStoreManager extends DistributedStoreMana
                     "The name of JanusGraph's keyspace.  It will be created if it does not exist.",
                     ConfigOption.Type.LOCAL, "janusgraph");
 
+    public static final ConfigOption<Integer> PROTOCOL_VERSION = 
+            new ConfigOption<>(CASSANDRA_NS, "protocol-version",
+                    "The protocol version used to connect to the Cassandra database.  If no value is supplied then the driver will negotiate with the server.",
+                    ConfigOption.Type.LOCAL, 0);
+
     // Consistency Levels and Atomic Batch
     public static final ConfigOption<String> CASSANDRA_READ_CONSISTENCY =
             new ConfigOption<String>(CASSANDRA_NS, "read-consistency-level",

@@ -14,8 +14,11 @@
 
 package org.janusgraph.graphdb.cql;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.JanusGraphPartitionGraphTest;
 import org.junit.BeforeClass;
 
@@ -23,12 +26,11 @@ public class CQLPartitionGraphTest extends JanusGraphPartitionGraphTest {
 
     @BeforeClass
     public static void beforeClass() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(CQLPartitionGraphTest.class);
     }
 
     @Override
     public WriteConfiguration getBaseConfiguration() {
-        return CassandraStorageSetup.getCQLConfiguration(getClass().getSimpleName()).getConfiguration();
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL).getConfiguration();
     }
-
 }

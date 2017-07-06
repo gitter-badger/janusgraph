@@ -15,11 +15,28 @@
 package org.janusgraph.hadoop;
 
 
-import org.janusgraph.CassandraStorageSetup;
+import static org.junit.Assert.*;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.janusgraph.core.JanusGraphVertex;
-import org.janusgraph.diskstorage.*;
+import org.janusgraph.diskstorage.BackendException;
+import org.janusgraph.diskstorage.KeyColumnValueStoreUtil;
+import org.janusgraph.diskstorage.KeyValueStoreUtil;
+import org.janusgraph.diskstorage.SimpleScanJob;
+import org.janusgraph.diskstorage.SimpleScanJobRunner;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.cassandra.thrift.CassandraThriftStoreManager;
-import org.janusgraph.diskstorage.configuration.*;
+import org.janusgraph.diskstorage.configuration.ConfigElement;
+import org.janusgraph.diskstorage.configuration.Configuration;
+import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStore;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStoreManager;
 import org.janusgraph.diskstorage.keycolumnvalue.StoreTransaction;
@@ -32,18 +49,9 @@ import org.janusgraph.hadoop.config.JanusGraphHadoopConfiguration;
 import org.janusgraph.hadoop.formats.cassandra.CassandraInputFormat;
 import org.janusgraph.hadoop.scan.CassandraHadoopScanRunner;
 import org.janusgraph.hadoop.scan.HadoopScanMapper;
-import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.concurrent.ExecutionException;
-
-import static org.junit.Assert.*;
 
 public class CassandraScanJobIT extends JanusGraphBaseTest {
 
@@ -158,7 +166,7 @@ public class CassandraScanJobIT extends JanusGraphBaseTest {
     @Override
     public WriteConfiguration getConfiguration() {
         String className = getClass().getSimpleName();
-        ModifiableConfiguration mc = CassandraStorageSetup.getEmbeddedConfiguration(className);
+        ModifiableConfiguration mc = CassandraGraphConfiguration.getConfiguration(CassandraScanJobIT.class, StandardStoreManager.CASSANDRA_EMBEDDED);
         return mc.getConfiguration();
     }
 

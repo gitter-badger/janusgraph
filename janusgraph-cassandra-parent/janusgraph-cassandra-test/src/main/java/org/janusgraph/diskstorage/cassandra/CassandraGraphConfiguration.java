@@ -14,7 +14,7 @@
 
 package org.janusgraph.diskstorage.cassandra;
 
-import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.CASSANDRA_KEYSPACE;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.*;
 
 import java.time.Duration;
@@ -32,16 +32,18 @@ public class CassandraGraphConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraGraphConfiguration.class);
 
     public static ModifiableConfiguration getConfiguration(Class<?> testClass, StandardStoreManager standardStoreManager) {
-        return getConfiguration(testClass.getSimpleName(),  testClass, standardStoreManager);
+        return getConfiguration(testClass.getSimpleName(), testClass, standardStoreManager);
     }
 
     public static ModifiableConfiguration getConfiguration(String graphName, Class<?> testClass, StandardStoreManager standardStoreManager) {
         ModifiableConfiguration config = buildGraphConfiguration();
         config.set(CASSANDRA_KEYSPACE, cleanKeyspaceName(graphName));
         LOGGER.debug("Set keyspace name: {}", config.get(CASSANDRA_KEYSPACE));
-        config.set(PAGE_SIZE,500);
+        config.set(PAGE_SIZE, 500);
         config.set(CONNECTION_TIMEOUT, Duration.ofSeconds(60L));
         config.set(STORAGE_BACKEND, standardStoreManager.getShorthands().get(0));
+        // Set to 3 because we have a 2.1.9 database that only supports version 3, if we let it negotiate then there are spurious errors.
+        config.set(PROTOCOL_VERSION, 3);
         CassandraConfiguration cassandraConfiguration = CassandraInitialiser.getCassandraConfiguration();
         try {
             return cassandraConfiguration.merge(testClass, config);

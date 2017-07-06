@@ -14,8 +14,11 @@
 
 package org.janusgraph.graphdb.cql;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.JanusGraphConcurrentTest;
 import org.janusgraph.testcategory.PerformanceTests;
 import org.junit.BeforeClass;
@@ -26,12 +29,12 @@ public class CQLGraphConcurrentTest extends JanusGraphConcurrentTest {
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return CassandraStorageSetup.getCQLConfiguration(getClass().getSimpleName()).getConfiguration();
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL).getConfiguration();
     }
 
 
     @BeforeClass
     public static void beforeClass() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(CQLGraphConcurrentTest.class);
     }
 }

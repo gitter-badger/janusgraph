@@ -26,6 +26,7 @@ import org.janusgraph.core.schema.JanusGraphManagement;
 import org.janusgraph.diskstorage.Backend;
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.Partitioner;
 import org.janusgraph.diskstorage.cassandra.astyanax.AstyanaxStoreManager;
 import org.janusgraph.diskstorage.cassandra.embedded.CassandraEmbeddedStoreManager;
 import org.janusgraph.diskstorage.cassandra.thrift.CassandraThriftStoreManager;
@@ -45,7 +46,9 @@ import org.janusgraph.hadoop.formats.hbase.HBaseBinaryInputFormat;
 import org.janusgraph.hadoop.scan.HadoopScanMapper;
 import org.janusgraph.hadoop.scan.HadoopScanRunner;
 import org.janusgraph.hadoop.scan.HadoopVertexScanMapper;
+import org.apache.cassandra.dht.ByteOrderedPartitioner;
 import org.apache.cassandra.dht.IPartitioner;
+import org.apache.cassandra.dht.Murmur3Partitioner;
 import org.apache.hadoop.mapreduce.InputFormat;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -152,9 +155,16 @@ public class MapReduceIndexManagement {
         if (CASSANDRA_STORE_MANAGER_CLASSES.contains(storeManagerClass)) {
             inputFormat = CassandraBinaryInputFormat.class;
             // Set the partitioner
-            IPartitioner part =
-                    ((AbstractCassandraStoreManager)graph.getBackend().getStoreManager()).getCassandraPartitioner();
-            hadoopConf.set("cassandra.input.partitioner.class", part.getClass().getName());
+            switch(((AbstractCassandraStoreManager)graph.getBackend().getStoreManager()).getPartitioner()) {
+                case BYTEORDER: {
+                    hadoopConf.set("cassandra.input.partitioner.class", ByteOrderedPartitioner.class.getName());
+                    break;
+                }
+                case RANDOM: {
+                    hadoopConf.set("cassandra.input.partitioner.class", Murmur3Partitioner.class.getName());
+                    break;
+                }
+            }
         } else if (HBASE_STORE_MANAGER_CLASSES.contains(storeManagerClass)) {
             inputFormat = HBaseBinaryInputFormat.class;
         } else {

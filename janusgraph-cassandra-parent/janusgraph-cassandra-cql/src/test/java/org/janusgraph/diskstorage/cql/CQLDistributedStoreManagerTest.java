@@ -14,8 +14,14 @@
 
 package org.janusgraph.diskstorage.cql;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
+
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.DistributedStoreManagerTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.common.DistributedStoreManager.Deployment;
 import org.janusgraph.testcategory.OrderedKeyStoreTests;
 import org.junit.After;
@@ -24,18 +30,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
-import static org.junit.Assert.assertEquals;
-
 public class CQLDistributedStoreManagerTest extends DistributedStoreManagerTest<CQLStoreManager> {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(CQLDistributedStoreManagerTest.class);
     }
 
     @Before
     public void setUp() throws BackendException {
-        manager = new CQLStoreManager(CassandraStorageSetup.getCQLConfiguration(this.getClass().getSimpleName()));
+        manager = new CQLStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL));
         store = manager.openDatabase("distributedcf");
     }
 
@@ -49,7 +53,8 @@ public class CQLDistributedStoreManagerTest extends DistributedStoreManagerTest<
     @Test
     @Category({ OrderedKeyStoreTests.class })
     public void testGetDeployment() {
-        final Deployment deployment = CassandraStorageSetup.HOSTNAME == null ? Deployment.LOCAL : Deployment.REMOTE;
+        assumeTrue("Store is ordered", this.manager.getFeatures().isKeyOrdered());
+        final Deployment deployment = HOSTNAME == null ? Deployment.LOCAL : Deployment.REMOTE;
         assertEquals(deployment, manager.getDeployment());
     }
 }

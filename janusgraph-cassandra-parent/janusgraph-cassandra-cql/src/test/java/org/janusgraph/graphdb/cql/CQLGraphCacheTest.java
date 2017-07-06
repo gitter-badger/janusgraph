@@ -14,9 +14,11 @@
 
 package org.janusgraph.graphdb.cql;
 
-import org.janusgraph.StorageSetup;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
-import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.JanusGraphTest;
 import org.junit.BeforeClass;
 
@@ -24,12 +26,11 @@ public class CQLGraphCacheTest extends JanusGraphTest {
 
     @Override
     public WriteConfiguration getConfiguration() {
-        return StorageSetup.addPermanentCache(CassandraStorageSetup.getCQLConfiguration(getClass().getSimpleName()));
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL).getConfiguration();
     }
-
 
     @BeforeClass
     public static void beforeClass() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(CQLGraphCacheTest.class);
     }
 }

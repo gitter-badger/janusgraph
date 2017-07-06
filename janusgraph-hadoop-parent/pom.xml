@@ -101,12 +101,6 @@
         </dependency>
         <dependency>
             <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-cassandra</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-hbase</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -238,25 +232,6 @@
                                 <resources>
                                     <resource>
                                         <directory>${project.build.directory}/shared-resources</directory>
-                                        <filtering>true</filtering>
-                                    </resource>
-                                </resources>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>filter-cassandra-murmur-config</id>
-                            <phase>process-test-resources</phase>
-                            <goals>
-                                <goal>copy-resources</goal>
-                            </goals>
-                            <configuration>
-                                <outputDirectory>${project.build.directory}/cassandra/conf/localhost-murmur</outputDirectory>
-                                <filters>
-                                    <filter>${top.level.basedir}/janusgraph-cassandra/config/cassandra-filters/localhost-murmur.properties</filter>
-                                </filters>
-                                <resources>
-                                    <resource>
-                                        <directory>${top.level.basedir}/janusgraph-cassandra/config/cassandra</directory>
                                         <filtering>true</filtering>
                                     </resource>
                                 </resources>

@@ -16,8 +16,10 @@ package org.janusgraph.blueprints.cql;
 
 import org.apache.tinkerpop.gremlin.GraphProvider;
 import org.janusgraph.blueprints.AbstractJanusGraphComputerProvider;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
-import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
 import org.janusgraph.graphdb.olap.computer.FulgoraGraphComputer;
 
 @GraphProvider.Descriptor(computer = FulgoraGraphComputer.class)
@@ -25,10 +27,9 @@ public class CQLGraphComputerProvider extends AbstractJanusGraphComputerProvider
 
     @Override
     public ModifiableConfiguration getJanusGraphConfiguration(String graphName, Class<?> test, String testMethodName) {
-        CassandraStorageSetup.startCleanEmbedded();
+        CassandraInitialiser.initialiseCassandra(getClass());
         ModifiableConfiguration config = super.getJanusGraphConfiguration(graphName, test, testMethodName);
-        config.setAll(CassandraStorageSetup.getCQLConfiguration(graphName).getAll());
+        config.setAll(CassandraGraphConfiguration.getConfiguration(graphName, getClass(), StandardStoreManager.CQL).getAll());
         return config;
     }
-
 }

@@ -14,7 +14,7 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static org.janusgraph.diskstorage.cql.CassandraStorageSetup.*;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 import static org.janusgraph.diskstorage.cql.CQLConfigOptions.*;
 import static org.junit.Assert.*;
 
@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.KeyColumnValueStoreTest;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.janusgraph.diskstorage.keycolumnvalue.StoreFeatures;
@@ -45,11 +47,11 @@ public class CQLStoreTest extends KeyColumnValueStoreTest {
 
     @BeforeClass
     public static void startCassandra() {
-        startCleanEmbedded();
+        initialiseCassandra(CQLStoreTest.class);
     }
 
     protected ModifiableConfiguration getBaseStorageConfiguration() {
-        return getCQLConfiguration(getClass().getSimpleName());
+        return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL);
     }
 
     private CQLStoreManager openStorageManager(final Configuration c) throws BackendException {

@@ -29,6 +29,11 @@
             <artifactId>janusgraph-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>com.datastax.cassandra</groupId>
@@ -53,20 +58,7 @@
         </dependency>
         <dependency>
             <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-cassandra</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-cassandra</artifactId>
-            <version>${project.version}</version>
-            <classifier>tests</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.janusgraph</groupId>
-            <artifactId>janusgraph-test</artifactId>
+            <artifactId>janusgraph-cassandra-test</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
@@ -95,96 +87,96 @@
             </testResource>
         </testResources>
         <plugins>
-<!--             <plugin> -->
-<!--                 <artifactId>maven-dependency-plugin</artifactId> -->
-<!--                 <executions> -->
-<!--                     <execution> -->
-<!--                         <id>set-dependency-properties</id> -->
-<!--                         <phase>process-test-classes</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>properties</goal> -->
-<!--                         </goals> -->
-<!--                     </execution> -->
-<!--                 </executions> -->
-<!--             </plugin> -->
-<!--             <plugin> -->
-<!--                 <artifactId>maven-resources-plugin</artifactId> -->
-<!--                 <executions> -->
-<!--                     <execution> -->
-<!--                         <id>filter-${test.byteorderedpartitioner}</id> -->
-<!--                         <phase>process-test-resources</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>copy-resources</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                             <outputDirectory>${project.build.directory}/cassandra/${test.byteorderedpartitioner}/conf</outputDirectory> -->
-<!--                             <filters> -->
-<!--                                 <filter>${project.build.testResources[0].directory}/properties/${test.byteorderedpartitioner}.properties</filter> -->
-<!--                             </filters> -->
-<!--                             <resources> -->
-<!--                                 <resource> -->
-<!--                                     <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
-<!--                                     <filtering>true</filtering> -->
-<!--                                 </resource> -->
-<!--                             </resources> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                     <execution> -->
-<!--                         <id>filter-${test.murmur}</id> -->
-<!--                         <phase>process-test-resources</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>copy-resources</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                             <outputDirectory>${project.build.directory}/cassandra/${test.murmur}/conf</outputDirectory> -->
-<!--                             <filters> -->
-<!--                                 <filter>${project.build.testResources[0].directory}/properties/${test.murmur}.properties</filter> -->
-<!--                             </filters> -->
-<!--                             <resources> -->
-<!--                                 <resource> -->
-<!--                                     <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
-<!--                                     <filtering>true</filtering> -->
-<!--                                 </resource> -->
-<!--                             </resources> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                     <execution> -->
-<!--                         <id>filter-${test.murmur-ssl}</id> -->
-<!--                         <phase>process-test-resources</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>copy-resources</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                             <outputDirectory>${project.build.directory}/cassandra/${test.murmur-ssl}/conf</outputDirectory> -->
-<!--                             <filters> -->
-<!--                                 <filter>${project.build.testResources[0].directory}/properties/${test.murmur-ssl}.properties</filter> -->
-<!--                             </filters> -->
-<!--                             <resources> -->
-<!--                                 <resource> -->
-<!--                                     <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
-<!--                                     <filtering>true</filtering> -->
-<!--                                 </resource> -->
-<!--                             </resources> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                     <execution> -->
-<!--                         <id>filter-${test.murmur-ssl}-static</id> -->
-<!--                         <phase>process-test-resources</phase> -->
-<!--                         <goals> -->
-<!--                             <goal>copy-resources</goal> -->
-<!--                         </goals> -->
-<!--                         <configuration> -->
-<!--                             <outputDirectory>${project.build.directory}/cassandra/${test.murmur-ssl}/conf</outputDirectory> -->
-<!--                             <resources> -->
-<!--                                 <resource> -->
-<!--                                     <directory>${project.build.testResources[0].directory}/keystores</directory> -->
-<!--                                     <filtering>false</filtering> -->
-<!--                                 </resource> -->
-<!--                             </resources> -->
-<!--                         </configuration> -->
-<!--                     </execution> -->
-<!--                 </executions> -->
-<!--             </plugin> -->
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-dependency-plugin</artifactId> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>set-dependency-properties</id> -->
+            <!-- <phase>process-test-classes</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>properties</goal> -->
+            <!-- </goals> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
+            <!-- <plugin> -->
+            <!-- <artifactId>maven-resources-plugin</artifactId> -->
+            <!-- <executions> -->
+            <!-- <execution> -->
+            <!-- <id>filter-${test.byteorderedpartitioner}</id> -->
+            <!-- <phase>process-test-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>copy-resources</goal> -->
+            <!-- </goals> -->
+            <!-- <configuration> -->
+            <!-- <outputDirectory>${project.build.directory}/cassandra/${test.byteorderedpartitioner}/conf</outputDirectory> -->
+            <!-- <filters> -->
+            <!-- <filter>${project.build.testResources[0].directory}/properties/${test.byteorderedpartitioner}.properties</filter> -->
+            <!-- </filters> -->
+            <!-- <resources> -->
+            <!-- <resource> -->
+            <!-- <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
+            <!-- <filtering>true</filtering> -->
+            <!-- </resource> -->
+            <!-- </resources> -->
+            <!-- </configuration> -->
+            <!-- </execution> -->
+            <!-- <execution> -->
+            <!-- <id>filter-${test.murmur}</id> -->
+            <!-- <phase>process-test-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>copy-resources</goal> -->
+            <!-- </goals> -->
+            <!-- <configuration> -->
+            <!-- <outputDirectory>${project.build.directory}/cassandra/${test.murmur}/conf</outputDirectory> -->
+            <!-- <filters> -->
+            <!-- <filter>${project.build.testResources[0].directory}/properties/${test.murmur}.properties</filter> -->
+            <!-- </filters> -->
+            <!-- <resources> -->
+            <!-- <resource> -->
+            <!-- <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
+            <!-- <filtering>true</filtering> -->
+            <!-- </resource> -->
+            <!-- </resources> -->
+            <!-- </configuration> -->
+            <!-- </execution> -->
+            <!-- <execution> -->
+            <!-- <id>filter-${test.murmur-ssl}</id> -->
+            <!-- <phase>process-test-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>copy-resources</goal> -->
+            <!-- </goals> -->
+            <!-- <configuration> -->
+            <!-- <outputDirectory>${project.build.directory}/cassandra/${test.murmur-ssl}/conf</outputDirectory> -->
+            <!-- <filters> -->
+            <!-- <filter>${project.build.testResources[0].directory}/properties/${test.murmur-ssl}.properties</filter> -->
+            <!-- </filters> -->
+            <!-- <resources> -->
+            <!-- <resource> -->
+            <!-- <directory>${project.build.testResources[0].directory}/cassandra</directory> -->
+            <!-- <filtering>true</filtering> -->
+            <!-- </resource> -->
+            <!-- </resources> -->
+            <!-- </configuration> -->
+            <!-- </execution> -->
+            <!-- <execution> -->
+            <!-- <id>filter-${test.murmur-ssl}-static</id> -->
+            <!-- <phase>process-test-resources</phase> -->
+            <!-- <goals> -->
+            <!-- <goal>copy-resources</goal> -->
+            <!-- </goals> -->
+            <!-- <configuration> -->
+            <!-- <outputDirectory>${project.build.directory}/cassandra/${test.murmur-ssl}/conf</outputDirectory> -->
+            <!-- <resources> -->
+            <!-- <resource> -->
+            <!-- <directory>${project.build.testResources[0].directory}/keystores</directory> -->
+            <!-- <filtering>false</filtering> -->
+            <!-- </resource> -->
+            <!-- </resources> -->
+            <!-- </configuration> -->
+            <!-- </execution> -->
+            <!-- </executions> -->
+            <!-- </plugin> -->
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>

@@ -14,11 +14,11 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static org.janusgraph.diskstorage.cql.CassandraStorageSetup.*;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
 
 import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.configuration.Configuration;
-import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.log.KCVSLogTest;
 import org.janusgraph.testcategory.SerialTests;
 import org.junit.BeforeClass;
@@ -29,19 +29,11 @@ public class CQLLogTest extends KCVSLogTest {
 
     @BeforeClass
     public static void startCassandra() {
-        startCleanEmbedded();
-    }
-
-    private ModifiableConfiguration getBaseStorageConfiguration() {
-        return getCQLConfiguration(getClass().getSimpleName());
-    }
-
-    private CQLStoreManager openStorageManager(final Configuration c) throws BackendException {
-        return new CQLStoreManager(c);
+        initialiseCassandra(CQLLogTest.class);
     }
 
     @Override
     public CQLStoreManager openStorageManager() throws BackendException {
-        return openStorageManager(getBaseStorageConfiguration());
+        return new CQLStoreManager(CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL));
     }
 }

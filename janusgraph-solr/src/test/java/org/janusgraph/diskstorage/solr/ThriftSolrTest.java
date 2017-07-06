@@ -14,22 +14,25 @@
 
 package org.janusgraph.diskstorage.solr;
 
-import com.google.common.base.Joiner;
-import org.janusgraph.CassandraStorageSetup;
+import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND;
+
+import java.io.File;
+
 import org.janusgraph.diskstorage.BackendException;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.junit.BeforeClass;
-import java.io.File;
 
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.INDEX_BACKEND;
+import com.google.common.base.Joiner;
 
 public class ThriftSolrTest extends SolrJanusGraphIndexTest {
 
     @Override
     public WriteConfiguration getConfiguration() {
-        ModifiableConfiguration config =
-                CassandraStorageSetup.getCassandraThriftConfiguration(ThriftSolrTest.class.getName());
+        ModifiableConfiguration config = CassandraGraphConfiguration.getConfiguration(ThriftSolrTest.class, StandardStoreManager.CASSANDRA_THRIFT);
         //Add index
         config.set(SolrIndex.ZOOKEEPER_URL, SolrRunner.getZookeeperUrls(), INDEX);
         config.set(SolrIndex.WAIT_SEARCHER, true, INDEX);
@@ -47,7 +50,7 @@ public class ThriftSolrTest extends SolrJanusGraphIndexTest {
         System.setProperty("test.cassandra.confdir", String.format(cassandraDirFormat, "conf"));
         System.setProperty("test.cassandra.datadir", String.format(cassandraDirFormat, "data"));
 
-        CassandraStorageSetup.startCleanEmbedded();
+        CassandraInitialiser.initialiseCassandra(ThriftSolrTest.class);
     }
 
 

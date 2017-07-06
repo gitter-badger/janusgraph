@@ -67,6 +67,7 @@ import org.janusgraph.diskstorage.BaseTransactionConfig;
 import org.janusgraph.diskstorage.PermanentBackendException;
 import org.janusgraph.diskstorage.StaticBuffer;
 import org.janusgraph.diskstorage.StoreMetaData.Container;
+import org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager;
 import org.janusgraph.diskstorage.common.DistributedStoreManager;
 import org.janusgraph.diskstorage.configuration.Configuration;
 import org.janusgraph.diskstorage.keycolumnvalue.KCVMutation;
@@ -207,11 +208,14 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
                 .addContactPointsWithPorts(contactPoints)
                 .withClusterName(configuration.get(CLUSTER_NAME));
 
-        if (configuration.get(PROTOCOL_VERSION) == 0) {
-            builder.withProtocolVersion(ProtocolVersion.NEWEST_SUPPORTED);
-        } else {
+        if (configuration.get(PROTOCOL_VERSION) != 0) {
             builder.withProtocolVersion(ProtocolVersion.fromInt(configuration.get(PROTOCOL_VERSION)));
+        } else if (configuration.get(AbstractCassandraStoreManager.PROTOCOL_VERSION) != 0) {
+            builder.withProtocolVersion(ProtocolVersion.fromInt(configuration.get(AbstractCassandraStoreManager.PROTOCOL_VERSION)));            
+        } else  {
+            builder.withProtocolVersion(ProtocolVersion.NEWEST_SUPPORTED);
         }
+        
         if (configuration.has(AUTH_USERNAME) && configuration.has(AUTH_PASSWORD)) {
             builder.withCredentials(configuration.get(AUTH_USERNAME), configuration.get(AUTH_PASSWORD));
         }

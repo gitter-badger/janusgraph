@@ -30,17 +30,25 @@
             <!-- <scope>test</scope> -->
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>janusgraph-cassandra</artifactId>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-astyanax</artifactId>
             <version>${project.version}</version>
-            <!-- TODO this should be scoped test -->
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>janusgraph-cassandra</artifactId>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-embedded</artifactId>
             <version>${project.version}</version>
-            <classifier>tests</classifier>
-            <!-- TODO this should be scoped test -->
+        </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-thrift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.janusgraph</groupId>
+            <artifactId>janusgraph-cassandra-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>

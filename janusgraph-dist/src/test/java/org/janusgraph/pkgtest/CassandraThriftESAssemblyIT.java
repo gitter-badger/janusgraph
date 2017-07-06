@@ -14,12 +14,11 @@
 
 package org.janusgraph.pkgtest;
 
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
 import org.janusgraph.diskstorage.es.ElasticsearchRunner;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.janusgraph.CassandraStorageSetup;
 
 public class CassandraThriftESAssemblyIT extends AbstractJanusGraphAssemblyIT {
 
@@ -27,7 +26,7 @@ public class CassandraThriftESAssemblyIT extends AbstractJanusGraphAssemblyIT {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        CassandraInitialiser.initialiseCassandra(CassandraThriftESAssemblyIT.class);
     }
 
     @BeforeClass

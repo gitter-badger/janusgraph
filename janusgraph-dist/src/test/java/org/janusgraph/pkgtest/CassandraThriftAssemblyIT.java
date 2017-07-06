@@ -14,16 +14,15 @@
 
 package org.janusgraph.pkgtest;
 
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import org.janusgraph.CassandraStorageSetup;
 
 public class CassandraThriftAssemblyIT extends AbstractJanusGraphAssemblyIT {
 
     @BeforeClass
     public static void startCassandra() {
-        CassandraStorageSetup.startCleanEmbedded();
+        CassandraInitialiser.initialiseCassandra(CassandraThriftAssemblyIT.class);
     }
 
     @Test

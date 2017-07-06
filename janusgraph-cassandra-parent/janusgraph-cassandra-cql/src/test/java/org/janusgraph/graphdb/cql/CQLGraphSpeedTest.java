@@ -14,9 +14,12 @@
 
 package org.janusgraph.graphdb.cql;
 
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
+
 import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.cql.CassandraStorageSetup;
+import org.janusgraph.diskstorage.StandardStoreManager;
+import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.graphdb.JanusGraphSpeedTest;
 import org.janusgraph.graphdb.SpeedTestSchema;
 import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
@@ -36,12 +39,12 @@ public class CQLGraphSpeedTest extends JanusGraphSpeedTest {
     private static final Logger log = LoggerFactory.getLogger(CQLGraphSpeedTest.class);
 
     public CQLGraphSpeedTest() throws BackendException {
-        super(CassandraStorageSetup.getCQLConfiguration(CQLGraphSpeedTest.class.getSimpleName()).getConfiguration());
+        super(CassandraGraphConfiguration.getConfiguration(CQLGraphSpeedTest.class, StandardStoreManager.CQL).getConfiguration());
     }
 
     @BeforeClass
     public static void beforeClass() {
-        CassandraStorageSetup.startCleanEmbedded();
+        initialiseCassandra(CQLGraphSpeedTest.class);
     }
 
     @Override

@@ -14,11 +14,10 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static org.janusgraph.diskstorage.cql.CassandraStorageSetup.*;
+import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.*;
+import static org.junit.Assert.assertTrue;
 
-import org.janusgraph.diskstorage.BackendException;
-import org.janusgraph.diskstorage.configuration.Configuration;
-import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
+import org.janusgraph.diskstorage.cassandra.CassandraInitialiser.CassandraConfiguration;
 import org.janusgraph.testcategory.CassandraSSLTests;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -28,20 +27,7 @@ public class CQLSSLStoreTest extends CQLStoreTest {
 
     @BeforeClass
     public static void startCassandra() {
-        startCleanEmbedded();
-    }
-
-    @Override
-    protected ModifiableConfiguration getBaseStorageConfiguration() {
-        return enableSSL(getCQLConfiguration(getClass().getSimpleName()));
-    }
-
-    private CQLStoreManager openStorageManager(final Configuration c) throws BackendException {
-        return new CQLStoreManager(c);
-    }
-
-    @Override
-    public CQLStoreManager openStorageManager() throws BackendException {
-        return openStorageManager(getBaseStorageConfiguration());
+        initialiseCassandra(CQLSSLStoreTest.class);
+        assertTrue("Cassandra is not running with SSL configured", CassandraConfiguration.UNORDERED_SSL == getCassandraConfiguration());
     }
 }
