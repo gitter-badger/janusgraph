@@ -26,10 +26,12 @@ import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.cassandra.service.CassandraDaemon;
 import org.apache.commons.io.FileUtils;
+import org.janusgraph.diskstorage.StandardStoreManager;
 import org.janusgraph.diskstorage.configuration.ConfigElement;
 import org.janusgraph.diskstorage.configuration.ModifiableConfiguration;
 import org.slf4j.Logger;
@@ -55,7 +57,7 @@ public class CassandraInitialiser {
     }
 
     public static void initialiseCassandra(Class<?> testClass, boolean startCassandra) {
-        if (!startCassandra || HOSTNAME != null) {
+        if (HOSTNAME != null) {
             return;
         }
 
@@ -97,7 +99,7 @@ public class CassandraInitialiser {
     }
 
     private static void startCassandra(final File cassandraYaml) {
-        System.setProperty("cassandra.jmx.local.port", "7199");
+        System.setProperty("cassandra.jmx.local.port", getForkNumber().map(forkNumber -> forkNumber + 7199).orElse(7199).toString());
         System.setProperty("cassandra.config", cassandraYaml.toURI().toString());
         System.setProperty("cassandra-foreground", "yes");
 
@@ -113,7 +115,8 @@ public class CassandraInitialiser {
     }
 
     public static File getCassandraDir(Class<?> testClass) throws URISyntaxException {
-        return new File(new File(testClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile(), "cassandra");
+        File targetDirectory = new File(new File(testClass.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile(), "cassandra");
+        return getForkNumber().map(forkNumber -> new File(targetDirectory, forkNumber.toString())).orElse(targetDirectory);
     }
 
     public static CassandraConfiguration getCassandraConfiguration() {
@@ -124,10 +127,22 @@ public class CassandraInitialiser {
         return CassandraConfiguration.valueOf(config);
     }
 
+    public static Optional<Integer> getForkNumber() {
+        String forkNumberString = System.getProperty("forkNumber");
+        if (forkNumberString == null) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(Integer.valueOf(forkNumberString));
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            return Optional.empty();
+        }
+    }
+
     public enum CassandraConfiguration {
         ORDERED {
             @Override
-            public Map<Object, Object> getConfiguration(final File cassandraDir) {
+            public Map<Object, Object> getConfiguration0(final File cassandraDir) {
                 return ImmutableMap.builder()
                         .put("listenAddress", "127.0.0.1")
                         .put("initialToken", "0000000000000000000000000000000000")
@@ -138,7 +153,7 @@ public class CassandraInitialiser {
         },
         UNORDERED {
             @Override
-            public Map<Object, Object> getConfiguration(final File cassandraDir) {
+            public Map<Object, Object> getConfiguration0(final File cassandraDir) {
                 return ImmutableMap.builder()
                         .put("listenAddress", "127.0.0.1")
                         .put("partitioner", "org.apache.cassandra.dht.Murmur3Partitioner")
@@ -148,7 +163,7 @@ public class CassandraInitialiser {
         },
         UNORDERED_SSL {
             @Override
-            public Map<Object, Object> getConfiguration(final File cassandraDir) throws IOException {
+            public Map<Object, Object> getConfiguration0(final File cassandraDir) throws IOException {
                 final File keyStoreLocation = Paths.get(cassandraDir.getAbsolutePath(), "conf", "test.keystore").toFile();
                 try (
                         InputStream is = getClass().getResourceAsStream("/ssl/test.keystore");
@@ -164,7 +179,7 @@ public class CassandraInitialiser {
                 }
 
                 return ImmutableMap.builder()
-                        .putAll(UNORDERED.getConfiguration(cassandraDir))
+                        .putAll(UNORDERED.getConfiguration0(cassandraDir))
                         .put("enableSSL", "true")
                         .put("keyStoreLocation", keyStoreLocation.getAbsolutePath())
                         .put("keyStorePassword", "cassandra")
@@ -181,12 +196,42 @@ public class CassandraInitialiser {
             }
         };
 
-        public abstract Map<Object, Object> getConfiguration(File cassandraDir) throws IOException;
+        public Map<Object, Object> getConfiguration(File cassandraDir) throws IOException {
+            final Optional<Integer> forkNumber = getForkNumber();
+            return ImmutableMap.builder()
+                    .put("thriftPort", forkNumber.map(num -> 9160 + num).orElse(9160).toString())
+                    .put("cqlPort", forkNumber.map(num -> 9042 + num).orElse(9042).toString())
+                    .put("storagePort", forkNumber.map(num -> 7000 + num).orElse(7000).toString())
+                    .put("sslStoragePort", forkNumber.map(num -> 7100 + num).orElse(7100).toString())
+                    .putAll(getConfiguration0(cassandraDir))
+                    .build();
+        }
+
+        public abstract Map<Object, Object> getConfiguration0(File cassandraDir) throws IOException;
 
         public ModifiableConfiguration merge(Class<?> testClass, ModifiableConfiguration config) throws Exception {
             config.set(STORAGE_CONF_FILE, getCassandraConfFile(getCassandraDir(testClass)).getAbsolutePath());
             config.set(STORAGE_HOSTS, new String[] { HOSTNAME != null ? HOSTNAME : "127.0.0.1" });
-            return config;
+
+            final Optional<Integer> forkNumber = getForkNumber();
+            final String shorthand = config.get(STORAGE_BACKEND);
+
+            for (StandardStoreManager standardStoreManager : StandardStoreManager.values()) {
+                if (standardStoreManager.getShorthands().contains(shorthand)) {
+                    switch (standardStoreManager) {
+                        case CQL: {
+                            config.set(STORAGE_PORT, forkNumber.map(num -> 9042 + num).orElse(9042));
+                            break;
+                        }
+                        default: {
+                            config.set(STORAGE_PORT, forkNumber.map(num -> 9160 + num).orElse(9160));
+                            break;
+                        }
+                    }
+                    return config;
+                }
+            }
+            throw new RuntimeException("Unknown storage backend shorthand: " + shorthand);
         }
     }
 }

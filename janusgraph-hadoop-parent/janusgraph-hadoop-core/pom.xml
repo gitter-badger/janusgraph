@@ -78,26 +78,26 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.gmavenplus</groupId>
-                <artifactId>gmavenplus-plugin</artifactId>
-                <version>${gmavenplus.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generateStubs</goal>
-                            <goal>compile</goal>
+<!--             <plugin> -->
+<!--                 <groupId>org.codehaus.gmavenplus</groupId> -->
+<!--                 <artifactId>gmavenplus-plugin</artifactId> -->
+<!--                 <version>${gmavenplus.version}</version> -->
+<!--                 <executions> -->
+<!--                     <execution> -->
+<!--                         <goals> -->
+<!--                             <goal>generateStubs</goal> -->
+<!--                             <goal>compile</goal> -->
                             <!-- Writing Groovy tests?  Uncomment these.
                             <goal>generateTestStubs</goal>
                             <goal>testCompile</goal>
                             -->
-                        </goals>
-                        <configuration>
-                            <providerSelection>1.8</providerSelection>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--                         </goals> -->
+<!--                         <configuration> -->
+<!--                             <providerSelection>1.8</providerSelection> -->
+<!--                         </configuration> -->
+<!--                     </execution> -->
+<!--                 </executions> -->
+<!--             </plugin> -->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>

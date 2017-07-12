@@ -15,20 +15,12 @@
 package org.janusgraph.graphdb.cql;
 
 import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.KEYSPACE;
-import static org.junit.Assert.*;
 
-import org.janusgraph.core.JanusGraphFactory;
 import org.janusgraph.diskstorage.StandardStoreManager;
 import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
-import org.janusgraph.diskstorage.configuration.ConfigElement;
 import org.janusgraph.diskstorage.configuration.WriteConfiguration;
 import org.janusgraph.graphdb.CassandraGraphTest;
-import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
-import org.janusgraph.graphdb.configuration.JanusGraphConstants;
-import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
 public class CQLGraphTest extends CassandraGraphTest {
 
@@ -40,27 +32,5 @@ public class CQLGraphTest extends CassandraGraphTest {
     @Override
     public WriteConfiguration getConfiguration() {
         return CassandraGraphConfiguration.getConfiguration(getClass(), StandardStoreManager.CQL).getConfiguration();
-    }
-
-    @Test
-    public void testTitanGraphBackwardCompatibility() {
-        close();
-        WriteConfiguration wc = getConfiguration();
-        wc.set(ConfigElement.getPath(KEYSPACE), "titan");
-        wc.set(ConfigElement.getPath(GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS), "x.x.x");
-
-        assertNull(wc.get(ConfigElement.getPath(GraphDatabaseConfiguration.INITIAL_JANUSGRAPH_VERSION),
-                GraphDatabaseConfiguration.INITIAL_JANUSGRAPH_VERSION.getDatatype()));
-
-        assertFalse(JanusGraphConstants.TITAN_COMPATIBLE_VERSIONS.contains(
-                wc.get(ConfigElement.getPath(GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS),
-                        GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS.getDatatype())));
-
-        wc.set(ConfigElement.getPath(GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS), "1.0.0");
-        assertTrue(JanusGraphConstants.TITAN_COMPATIBLE_VERSIONS.contains(
-                wc.get(ConfigElement.getPath(GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS),
-                        GraphDatabaseConfiguration.TITAN_COMPATIBLE_VERSIONS.getDatatype())));
-
-        graph = (StandardJanusGraph) JanusGraphFactory.open(wc);
     }
 }

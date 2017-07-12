@@ -14,8 +14,8 @@
 
 package org.janusgraph.diskstorage.cql;
 
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
 import static org.janusgraph.diskstorage.cassandra.CassandraInitialiser.initialiseCassandra;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.*;
 import static org.junit.Assert.*;
 
 import java.util.Collections;

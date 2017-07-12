@@ -10,14 +10,14 @@
     <packaging>pom</packaging>
     <name>JanusGraph-HBase: Parent Module</name>
     <url>http://janusgraph.org</url>
-    
+
     <modules>
         <module>janusgraph-hbase-core</module>
         <module>janusgraph-hbase-098</module>
         <module>janusgraph-hbase-10</module>
         <module>janusgraph-hbase</module>
     </modules>
-    
+
     <properties>
         <janusgraph.hbase.mvn.opts>-Dhadoop.version=${hadoop.version} -Dhadoop.profile=${hadoop.profile} ${janusgraph.hbase.mvn.opts.extra}</janusgraph.hbase.mvn.opts>
         <janusgraph.hbase.mvn.opts.extra />
@@ -25,7 +25,7 @@
         <mem.jvm.opts>-Xms256m -Xmx768m -ea -XX:+HeapDumpOnOutOfMemoryError ${test.extra.jvm.opts}</mem.jvm.opts>
         <top.level.basedir>${project.parent.basedir}</top.level.basedir>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.janusgraph</groupId>
@@ -46,31 +46,25 @@
         </dependency>
         <!-- Logging.
 
-             Based on these two HBase links, it seems that HBase has
-             hard dependencies on log4j and slf4j-log4j12 (in addition
-             to commons-logging):
+            Based on these two HBase links, it seems that HBase has
+            hard dependencies on log4j and slf4j-log4j12 (in addition
+            to commons-logging):
 
-             http://hbase.apache.org/book/config.files.html#client_dependencies
-             https://issues.apache.org/jira/browse/HBASE-2608
+            http://hbase.apache.org/book/config.files.html#client_dependencies
+            https://issues.apache.org/jira/browse/HBASE-2608
 
-             Our parent pom declares optional runtime-scoped dependencies
-             on slf4j-log4j12 and log4j.  But according to the links above,
-             these are required compile-scoped dependencies for HBase.
-             We override the parent's dependency declarations below.
+            Our parent pom declares optional runtime-scoped dependencies
+            on slf4j-log4j12 and log4j. But according to the links above,
+            these are required compile-scoped dependencies for HBase.
+            We override the parent's dependency declarations below.
 
-             These declarations could go away if HBase ever fully migrates
-             to slf4j and removes its hard dependency on log4j.
+            These declarations could go away if HBase ever fully migrates
+            to slf4j and removes its hard dependency on log4j.
 
-             Note, logback-classic is added explicitly to ensure slf4j-log4j12
-             binding appears on the classpath before logback-classic. See
-             comments in janusgraph-cassandra/pom.xml for more information.
+            Note, logback-classic is added explicitly to ensure slf4j-log4j12
+            binding appears on the classpath before logback-classic. See
+            comments in janusgraph-cassandra/pom.xml for more information.
         -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <optional>false</optional>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
@@ -82,7 +76,7 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
     </dependencies>
-    
+
     <build>
         <pluginManagement>
             <plugins>
@@ -150,8 +144,8 @@
                     </executions>
                 </plugin>
                 <plugin>
-                    <!-- Using assembly instead of resources because resources breaks filemodes and 
-                         permissions: http://jira.codehaus.org/browse/MRESOURCES-132 -->
+                    <!-- Using assembly instead of resources because resources breaks filemodes and
+                        permissions: http://jira.codehaus.org/browse/MRESOURCES-132 -->
                     <artifactId>maven-assembly-plugin</artifactId>
                     <executions>
                         <execution>
@@ -172,7 +166,7 @@
                         </execution>
                     </executions>
                 </plugin>
-                
+
                 <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
                     <executions>
@@ -202,4 +196,98 @@
             </plugins>
         </pluginManagement>
     </build>
+    <profiles>
+        <profile>
+            <id>hadoop2</id>
+            <activation>
+                <property>
+                    <name>!hadoop.profile</name>
+                </property>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-annotations</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-auth</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-client</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>javax.servlet</groupId>
+                                <artifactId>servlet-api</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <classifier>tests</classifier>
+                        <type>test-jar</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-core</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <classifier>tests</classifier>
+                        <type>test-jar</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-shuffle</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-api</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-server-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
 </project>

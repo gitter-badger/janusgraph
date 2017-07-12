@@ -14,7 +14,7 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.*;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
 
 import org.janusgraph.diskstorage.BaseTransactionConfig;
 import org.janusgraph.diskstorage.common.AbstractStoreTransaction;
@@ -33,8 +33,8 @@ public class CQLTransaction extends AbstractStoreTransaction {
 
     public CQLTransaction(final BaseTransactionConfig config) {
         super(config);
-        this.readConsistencyLevel = ConsistencyLevel.valueOf(getConfiguration().getCustomOption(READ_CONSISTENCY));
-        this.writeConsistencyLevel = ConsistencyLevel.valueOf(getConfiguration().getCustomOption(WRITE_CONSISTENCY));
+        this.readConsistencyLevel = ConsistencyLevel.valueOf(getConfiguration().getCustomOption(CASSANDRA_READ_CONSISTENCY));
+        this.writeConsistencyLevel = ConsistencyLevel.valueOf(getConfiguration().getCustomOption(CASSANDRA_WRITE_CONSISTENCY));
     }
 
     ConsistencyLevel getReadConsistencyLevel() {

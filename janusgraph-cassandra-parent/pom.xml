@@ -1,16 +1,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.janusgraph</groupId>
         <artifactId>janusgraph</artifactId>
         <version>0.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>janusgraph-cassandra-parent</artifactId>
     <name>JanusGraph-Cassandra: Parent Module</name>
     <packaging>pom</packaging>
-    <url>http://janusgraph.org</url>
 
     <modules>
         <module>janusgraph-cassandra-astyanax</module>
@@ -20,5 +19,227 @@
         <module>janusgraph-cassandra-test</module>
         <module>janusgraph-cassandra-thrift</module>
     </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${test.skip.unordered}</skipTests>
+                                <forkCount>2C</forkCount>
+                                <reportNameSuffix>unordered</reportNameSuffix>
+                                <systemPropertyVariables>
+                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                    <forkNumber>0${surefire.forkNumber}</forkNumber>
+                                    <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
+                                </systemPropertyVariables>
+                                <excludes>
+                                    <exclude>**/*ComputerTest.java</exclude>
+                                    <exclude>**/*Groovy*Test.java</exclude>
+                                    <exclude>**/*PerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessPerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessTest.java</exclude>
+                                    <exclude>**/*StructureTest.java</exclude>
+                                </excludes>
+                                <excludedGroups>
+                                    org.janusgraph.testcategory.BrittleTests,
+                                    org.janusgraph.testcategory.MemoryTests,
+                                    org.janusgraph.testcategory.PerformanceTests,
+                                    org.janusgraph.testcategory.SerialTests,
+                                    org.janusgraph.testcategory.OrderedKeyStoreTests,
+                                    org.janusgraph.testcategory.CassandraSSLTests
+                                </excludedGroups>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>ordered-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${test.skip.ordered}</skipTests>
+                                <forkCount>2C</forkCount>
+                                <reportNameSuffix>ordered</reportNameSuffix>
+                                <systemPropertyVariables>
+                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                    <forkNumber>0${surefire.forkNumber}</forkNumber>
+                                    <CASSANDRA_CONFIG>ORDERED</CASSANDRA_CONFIG>
+                                </systemPropertyVariables>
+                                <excludes>
+                                    <exclude>**/*ComputerTest.java</exclude>
+                                    <exclude>**/*Groovy*Test.java</exclude>
+                                    <exclude>**/*PerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessPerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessTest.java</exclude>
+                                    <exclude>**/*StructureTest.java</exclude>
+                                </excludes>
+                                <excludedGroups>
+                                    org.janusgraph.testcategory.BrittleTests,
+                                    org.janusgraph.testcategory.MemoryTests,
+                                    org.janusgraph.testcategory.PerformanceTests,
+                                    org.janusgraph.testcategory.SerialTests,
+                                    org.janusgraph.testcategory.UnorderedKeyStoreTests,
+                                    org.janusgraph.testcategory.CassandraSSLTests
+                                </excludedGroups>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>ssl-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${test.skip.ssl}</skipTests>
+                                <forkCount>2C</forkCount>
+                                <reportNameSuffix>ssl</reportNameSuffix>
+                                <systemPropertyVariables>
+                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                    <forkNumber>0${surefire.forkNumber}</forkNumber>
+                                    <CASSANDRA_CONFIG>UNORDERED_SSL</CASSANDRA_CONFIG>
+                                </systemPropertyVariables>
+                                <excludes>
+                                    <exclude>**/*ComputerTest.java</exclude>
+                                    <exclude>**/*Groovy*Test.java</exclude>
+                                    <exclude>**/*PerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessPerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessTest.java</exclude>
+                                    <exclude>**/*StructureTest.java</exclude>
+                                </excludes>
+                                <groups>org.janusgraph.testcategory.CassandraSSLTests</groups>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>serial-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${test.skip.serial}</skipTests>
+                                <forkCount>2C</forkCount>
+                                <reportNameSuffix>serial</reportNameSuffix>
+                                <systemPropertyVariables>
+                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                    <forkNumber>0${surefire.forkNumber}</forkNumber>
+                                    <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
+                                </systemPropertyVariables>
+                                <excludes>
+                                    <exclude>**/*ComputerTest.java</exclude>
+                                    <exclude>**/*Groovy*Test.java</exclude>
+                                    <exclude>**/*PerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessPerformanceTest.java</exclude>
+                                    <exclude>**/*ProcessTest.java</exclude>
+                                    <exclude>**/*StructureTest.java</exclude>
+                                </excludes>
+                                <groups>org.janusgraph.testcategory.SerialTests</groups>
+                            </configuration>
+                        </execution>
+                        <execution>
+                            <id>tinkerpop-test</id>
+                            <goals>
+                                <goal>test</goal>
+                            </goals>
+                            <configuration>
+                                <skipTests>${test.skip.tinkerpop}</skipTests>
+                                <reportNameSuffix>tinkerpop</reportNameSuffix>
+                                <includes>
+                                    <include>**/*ComputerTest.java</include>
+                                    <include>**/*Groovy*Test.java</include>
+                                    <include>**/*ProcessPerformanceTest.java</include>
+                                    <include>**/*ProcessTest.java</include>
+                                    <include>**/*StructureTest.java</include>
+                                </includes>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                            <configuration>
+                                <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                                <workingDirectory>${project.build.directory}</workingDirectory>
+                                <systemPropertyVariables>
+                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                    <storage.hostname>0.0.0.0</storage.hostname>
+                                    <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
+                                </systemPropertyVariables>
+                                <includes>
+                                    <include>**/org/janusgraph/diskstorage/**/*.java</include>
+                                    <include>**/org/janusgraph/graphdb/**/*.java</include>
+                                </includes>
+                                <excludedGroups>
+                                    org.janusgraph.testcategory.BrittleTests,
+                                    org.janusgraph.testcategory.MemoryTests,
+                                    org.janusgraph.testcategory.PerformanceTests,
+                                    org.janusgraph.testcategory.SerialTests,
+                                    org.janusgraph.testcategory.OrderedKeyStoreTests,
+                                    org.janusgraph.testcategory.CassandraSSLTests
+                                </excludedGroups>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <configuration>
+                        <images>
+                            <image>
+                                <alias>scylladb</alias>
+                                <name>scylladb/scylla:${scylladb.version}</name>
+                                <run>
+                                    <!-- Limit to two CPUs -->
+                                    <cmd>--smp 2</cmd>
+                                    <!-- Expose Thrift and CQL ports -->
+                                    <ports>
+                                        <port>9160:9160</port>
+                                        <port>9042:9042</port>
+                                    </ports>
+                                    <wait>
+                                        <tcp>
+                                            <ports>
+                                                <port>9160</port>
+                                                <port>9042</port>
+                                            </ports>
+                                        </tcp>
+                                        <time>60000</time>
+                                    </wait>
+                                </run>
+                            </image>
+                        </images>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>docker-start</id>
+                            <phase>pre-integration-test</phase>
+                            <goals>
+                                <goal>start</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>docker-stop</id>
+                            <phase>post-integration-test</phase>
+                            <goals>
+                                <goal>stop</goal>
+                                <goal>remove</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
 

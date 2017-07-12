@@ -151,13 +151,9 @@
         </dependency>
 
         <!-- Logging backends.
-             Enforce a classpath ordering constraint to ensure slf4j-log4j12
-             binding appears on the classpath before logback-classic.
-             See comments in janusgraph-cassandra/pom.xml for more information. -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
+            Enforce a classpath ordering constraint to ensure slf4j-log4j12
+            binding appears on the classpath before logback-classic.
+            See comments in janusgraph-cassandra/pom.xml for more information. -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -342,25 +338,119 @@
                 </plugin>
 
                 <!--
-                <plugin>
+                    <plugin>
                     <artifactId>maven-remote-resources-plugin</artifactId>
                     <executions>
-                        <execution>
-                            <id>unpack-common-test-classes</id>
-                            <phase>process-test-classes</phase>
-                            <goals>
-                                <goal>process</goal>
-                            </goals>
-                            <configuration>
-                                <resourceBundles>
-                                    <resourceBundle>${project.groupId}:shared-resources:${project.version}</resourceBundle>
-                                </resourceBundles>
-                            </configuration>
-                        </execution>
+                    <execution>
+                    <id>unpack-common-test-classes</id>
+                    <phase>process-test-classes</phase>
+                    <goals>
+                    <goal>process</goal>
+                    </goals>
+                    <configuration>
+                    <resourceBundles>
+                    <resourceBundle>${project.groupId}:shared-resources:${project.version}</resourceBundle>
+                    </resourceBundles>
+                    </configuration>
+                    </execution>
                     </executions>
-                </plugin>
+                    </plugin>
                 -->
             </plugins>
         </pluginManagement>
     </build>
+    <profiles>
+        <profile>
+            <id>hadoop2</id>
+            <activation>
+                <property>
+                    <name>!hadoop.profile</name>
+                </property>
+            </activation>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-annotations</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-auth</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-client</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <exclusions>
+                            <exclusion>
+                                <groupId>javax.servlet</groupId>
+                                <artifactId>servlet-api</artifactId>
+                            </exclusion>
+                        </exclusions>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-hdfs</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <classifier>tests</classifier>
+                        <type>test-jar</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-core</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                        <version>${hadoop2.version}</version>
+                        <classifier>tests</classifier>
+                        <type>test-jar</type>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-mapreduce-client-shuffle</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-api</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.hadoop</groupId>
+                        <artifactId>hadoop-yarn-server-common</artifactId>
+                        <version>${hadoop2.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+    </profiles>
 </project>

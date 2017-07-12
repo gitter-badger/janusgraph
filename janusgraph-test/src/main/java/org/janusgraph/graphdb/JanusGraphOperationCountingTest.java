@@ -45,6 +45,7 @@ import org.janusgraph.graphdb.internal.InternalRelationType;
 import org.janusgraph.graphdb.internal.InternalVertexLabel;
 import org.janusgraph.graphdb.types.CompositeIndexType;
 import org.janusgraph.graphdb.types.IndexType;
+import org.janusgraph.testcategory.BrittleTests;
 import org.janusgraph.testcategory.SerialTests;
 import org.janusgraph.util.stats.MetricManager;
 import org.apache.tinkerpop.gremlin.structure.Direction;
@@ -580,6 +581,7 @@ public abstract class JanusGraphOperationCountingTest extends JanusGraphBaseTest
      * Tests cache performance
      */
     @Test
+    @Category(BrittleTests.class)
     public void testCacheSpeedup() {
         Object[] newConfig = {option(GraphDatabaseConfiguration.DB_CACHE),true,
                 option(GraphDatabaseConfiguration.DB_CACHE_TIME),0};

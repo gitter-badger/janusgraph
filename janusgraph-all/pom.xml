@@ -11,11 +11,11 @@
     <url>http://janusgraph.org</url>
 
     <!--
-      This project depends on the rest of JanusGraph, so Maven users and
-      users of tools that can parse Maven pom.xml dependencies can
-      depend on this artifact and have the rest of the JanusGraph artifacts
-      pulled in automatically.  The JAR doesn't contain anything
-      besides some redundant properties files.
+        This project depends on the rest of JanusGraph, so Maven users and
+        users of tools that can parse Maven pom.xml dependencies can
+        depend on this artifact and have the rest of the JanusGraph artifacts
+        pulled in automatically. The JAR doesn't contain anything
+        besides some redundant properties files.
     -->
 
     <properties>
@@ -79,12 +79,12 @@
             <version>${project.version}</version>
         </dependency>
         <!--
-        Commented since it requires Hadoop 2 and TP3 requires Hadoop 1.
-        <dependency>
+            Commented since it requires Hadoop 2 and TP3 requires Hadoop 1.
+            <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-solr</artifactId>
             <version>${project.version}</version>
-        </dependency>
+            </dependency>
         -->
         <dependency>
             <groupId>org.janusgraph</groupId>
@@ -93,10 +93,10 @@
         </dependency>
 
         <!-- Override Jackson versions in our transitive dependencies.
-             Without these deps, janusgraph-all users can end up with
-             1.9 + 1.8 jars together, and this leads to linkage errors.
-             It might be a better idea to dependencyManagement imports if your Maven version supports it:
-             http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies -->
+            Without these deps, janusgraph-all users can end up with
+            1.9 + 1.8 jars together, and this leads to linkage errors.
+            It might be a better idea to dependencyManagement imports if your Maven version supports it:
+            http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Importing_Dependencies -->
         <!-- Jackson 1.x -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -118,7 +118,7 @@
             <artifactId>jackson-jaxrs</artifactId>
             <version>${jackson1.version}</version>
         </dependency>
- 
+
         <!-- Jackson 2.x -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -153,6 +153,15 @@
 
         <plugins>
             <!-- Disable unused plugins -->
+            <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-dependency-convergence</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>

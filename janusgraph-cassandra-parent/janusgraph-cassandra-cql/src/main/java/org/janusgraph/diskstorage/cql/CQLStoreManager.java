@@ -14,33 +14,13 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.createKeyspace;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.dropKeyspace;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.ATOMIC_BATCH_MUTATE;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.BATCH_STATEMENT_SIZE;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CLUSTER_NAME;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.ONLY_USE_LOCAL_CONSISTENCY_FOR_SYSTEM_OPERATIONS;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.KEYSPACE;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.LOCAL_DATACENTER;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.PROTOCOL_VERSION;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.READ_CONSISTENCY;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.REPLICATION_FACTOR;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.REPLICATION_OPTIONS;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.REPLICATION_STRATEGY;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.SSL_ENABLED;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.SSL_TRUSTSTORE_LOCATION;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.SSL_TRUSTSTORE_PASSWORD;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.WRITE_CONSISTENCY;
+import static com.datastax.driver.core.schemabuilder.SchemaBuilder.*;
+import static io.vavr.API.*;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
+import static org.janusgraph.diskstorage.cql.CQLConfigOptions.*;
 import static org.janusgraph.diskstorage.cql.CQLKeyColumnValueStore.EXCEPTION_MAPPER;
 import static org.janusgraph.diskstorage.cql.CQLTransaction.getTransaction;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.AUTH_PASSWORD;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.AUTH_USERNAME;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.METRICS_PREFIX;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.METRICS_SYSTEM_PREFIX_DEFAULT;
-import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.buildGraphConfiguration;
+import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -129,7 +109,7 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
      */
     public CQLStoreManager(final Configuration configuration) throws BackendException {
         super(configuration, DEFAULT_PORT);
-        this.keyspace = configuration.get(KEYSPACE);
+        this.keyspace = configuration.get(CASSANDRA_KEYSPACE);
         this.batchSize = configuration.get(BATCH_STATEMENT_SIZE);
         this.atomicBatch = configuration.get(ATOMIC_BATCH_MUTATE);
 
@@ -147,13 +127,13 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
         this.session = initializeSession(this.keyspace);
 
         final Configuration global = buildGraphConfiguration()
-                .set(READ_CONSISTENCY, CONSISTENCY_QUORUM)
-                .set(WRITE_CONSISTENCY, CONSISTENCY_QUORUM)
+                .set(CASSANDRA_READ_CONSISTENCY, CONSISTENCY_QUORUM)
+                .set(CASSANDRA_WRITE_CONSISTENCY, CONSISTENCY_QUORUM)
                 .set(METRICS_PREFIX, METRICS_SYSTEM_PREFIX_DEFAULT);
 
         final Configuration local = buildGraphConfiguration()
-                .set(READ_CONSISTENCY, CONSISTENCY_LOCAL_QUORUM)
-                .set(WRITE_CONSISTENCY, CONSISTENCY_LOCAL_QUORUM)
+                .set(CASSANDRA_READ_CONSISTENCY, CONSISTENCY_LOCAL_QUORUM)
+                .set(CASSANDRA_WRITE_CONSISTENCY, CONSISTENCY_LOCAL_QUORUM)
                 .set(METRICS_PREFIX, METRICS_SYSTEM_PREFIX_DEFAULT);
 
         final Boolean onlyUseLocalConsistency = configuration.get(ONLY_USE_LOCAL_CONSISTENCY_FOR_SYSTEM_OPERATIONS);
@@ -209,9 +189,7 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
                 .withClusterName(configuration.get(CLUSTER_NAME));
 
         if (configuration.get(PROTOCOL_VERSION) != 0) {
-            builder.withProtocolVersion(ProtocolVersion.fromInt(configuration.get(PROTOCOL_VERSION)));
-        } else if (configuration.get(AbstractCassandraStoreManager.PROTOCOL_VERSION) != 0) {
-            builder.withProtocolVersion(ProtocolVersion.fromInt(configuration.get(AbstractCassandraStoreManager.PROTOCOL_VERSION)));            
+            builder.withProtocolVersion(ProtocolVersion.fromInt(configuration.get(PROTOCOL_VERSION)));            
         } else  {
             builder.withProtocolVersion(ProtocolVersion.NEWEST_SUPPORTED);
         }
@@ -226,12 +204,15 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
                     .build()));
         }
 
-        if (configuration.get(SSL_ENABLED)) {
+        if (configuration.get(AbstractCassandraStoreManager.SSL_ENABLED) || configuration.get(SSL_ENABLED)) {
             try {
+                final String trustStoreLocation = configuration.has(AbstractCassandraStoreManager.SSL_TRUSTSTORE_LOCATION) ? configuration.get(AbstractCassandraStoreManager.SSL_TRUSTSTORE_LOCATION) : configuration.get(SSL_TRUSTSTORE_LOCATION);
+                final String trustStorePassword = configuration.has(AbstractCassandraStoreManager.SSL_TRUSTSTORE_PASSWORD) ? configuration.get(AbstractCassandraStoreManager.SSL_TRUSTSTORE_PASSWORD) : configuration.get(SSL_TRUSTSTORE_PASSWORD);
+                
                 final TrustManager[] trustManagers;
-                try (final FileInputStream keyStoreStream = new FileInputStream(configuration.get(SSL_TRUSTSTORE_LOCATION))) {
+                try (final FileInputStream keyStoreStream = new FileInputStream(trustStoreLocation)) {
                     final KeyStore keystore = KeyStore.getInstance("jks");
-                    keystore.load(keyStoreStream, configuration.get(SSL_TRUSTSTORE_PASSWORD).toCharArray());
+                    keystore.load(keyStoreStream, trustStorePassword.toCharArray());
                     final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
                     trustManagerFactory.init(keystore);
                     trustManagers = trustManagerFactory.getTrustManagers();

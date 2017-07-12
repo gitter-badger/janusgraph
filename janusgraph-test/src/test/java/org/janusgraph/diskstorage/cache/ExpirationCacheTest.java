@@ -83,7 +83,7 @@ public class ExpirationCacheTest extends KCVSCacheTest {
 
         //Should still see cached results
         verifyResults(key,keys,query,6);
-        times.sleepPast(utime.plus(expirationTime.dividedBy(2))); //Sleep half way through expiration time
+        times.sleepPast(utime.plus(expirationTime.dividedBy(3))); //Sleep one third of the way through expiration time
         verifyResults(key, keys, query, 6);
         times.sleepPast(utime.plus(expirationTime)); //Sleep past expiration time...
         times.sleepFor(Duration.ofMillis(5)); //...and just a little bit longer

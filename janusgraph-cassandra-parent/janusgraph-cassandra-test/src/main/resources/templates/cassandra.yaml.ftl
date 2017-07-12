@@ -359,12 +359,12 @@ trickle_fsync_interval_in_kb: 10240
 
 # TCP port, for commands and data
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-storage_port: 7000
+storage_port: ${storagePort}
 
 # SSL port, for encrypted communication.  Unused unless enabled in
 # encryption_options
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-ssl_storage_port: 7001
+ssl_storage_port: ${sslStoragePort}
 
 # Address or interface to bind to and tell other Cassandra nodes to connect to.
 # You _must_ change this if you want multiple nodes to be able to communicate!
@@ -401,7 +401,7 @@ listen_address: ${listenAddress}
 start_native_transport: true
 # port for the CQL native transport to listen for clients on
 # For security reasons, you should not expose this port to the internet.  Firewall it if needed.
-native_transport_port: 9042
+native_transport_port: ${cqlPort}
 # The maximum threads for handling requests when the native transport is used.
 # This is similar to rpc_max_threads though the default differs slightly (and
 # there is no native_transport_min_threads, idle threads will always be stopped
@@ -446,7 +446,7 @@ rpc_address: ${listenAddress}
 # rpc_interface_prefer_ipv6: false
 
 # port for Thrift to listen for clients on
-rpc_port: 9160
+rpc_port: ${thriftPort}
 
 # RPC address to broadcast to drivers and other Cassandra nodes. This cannot
 # be set to 0.0.0.0. If left blank, this will be set to the value of

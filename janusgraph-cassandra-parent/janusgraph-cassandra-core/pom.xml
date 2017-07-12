@@ -9,12 +9,6 @@
 
     <artifactId>janusgraph-cassandra-core</artifactId>
     <name>JanusGraph-Cassandra: Core Module</name>
-    <url>http://janusgraph.org</url>
-
-    <properties>
-        <astyanax.version>3.8.0</astyanax.version>
-        <vavr.version>0.9.0</vavr.version>
-    </properties>
 
     <dependencies>
         <dependency>

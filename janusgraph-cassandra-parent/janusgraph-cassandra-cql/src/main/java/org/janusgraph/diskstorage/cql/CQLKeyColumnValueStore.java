@@ -14,35 +14,11 @@
 
 package org.janusgraph.diskstorage.cql;
 
-import static com.datastax.driver.core.querybuilder.QueryBuilder.bindMarker;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.column;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.delete;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.eq;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.gte;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.insertInto;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.lt;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.lte;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.select;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.timestamp;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.token;
-import static com.datastax.driver.core.querybuilder.QueryBuilder.ttl;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.createTable;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.dateTieredStrategy;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.deflate;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.leveledStrategy;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.lz4;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.noCompression;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.sizedTieredStategy;
-import static com.datastax.driver.core.schemabuilder.SchemaBuilder.snappy;
-import static io.vavr.API.$;
-import static io.vavr.API.Case;
-import static io.vavr.API.Match;
+import static com.datastax.driver.core.querybuilder.QueryBuilder.*;
+import static com.datastax.driver.core.schemabuilder.SchemaBuilder.*;
+import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION_BLOCK_SIZE;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.CF_COMPRESSION_TYPE;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.COMPACTION_OPTIONS;
-import static org.janusgraph.diskstorage.cql.CQLConfigOptions.COMPACTION_STRATEGY;
+import static org.janusgraph.diskstorage.cassandra.AbstractCassandraStoreManager.*;
 import static org.janusgraph.diskstorage.cql.CQLTransaction.getTransaction;
 
 import java.util.ArrayList;

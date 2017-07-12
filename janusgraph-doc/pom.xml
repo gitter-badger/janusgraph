@@ -52,6 +52,15 @@
                 bindings because we have no main or test resources.
             -->
             <plugin>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-dependency-convergence</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <inherited>false</inherited>
                 <executions>
