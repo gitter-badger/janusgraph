@@ -236,7 +236,8 @@ public class CQLStoreManager extends DistributedStoreManager implements KeyColum
 
     private Session initializeSession(final String keyspaceName) {
         final Configuration configuration = getStorageConfig();
-        final Map<String, Object> replication = Match(configuration.get(REPLICATION_STRATEGY)).of(
+        final String replicationStrategy = configuration.get(REPLICATION_STRATEGY);
+        final Map<String, Object> replication = Match(replicationStrategy.substring(replicationStrategy.lastIndexOf('.') + 1)).of(
                 Case($("SimpleStrategy"), strategy -> HashMap.<String, Object> of("class", strategy, "replication_factor", configuration.get(REPLICATION_FACTOR))),
                 Case($("NetworkTopologyStrategy"),
                         strategy -> HashMap.<String, Object> of("class", strategy)

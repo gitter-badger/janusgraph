@@ -45,7 +45,6 @@
                 <test.skip.unordered>true</test.skip.unordered>
                 <test.skip.ordered>true</test.skip.ordered>
                 <test.skip.ssl>true</test.skip.ssl>
-                <test.skip.serial>true</test.skip.serial>
             </properties>
             <build>
                 <plugins>

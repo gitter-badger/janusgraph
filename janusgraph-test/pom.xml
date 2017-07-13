@@ -135,6 +135,31 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>static-test</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <skipTests>${test.skip.static}</skipTests>
+                            <forkCount>2C</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <reportNameSuffix>static</reportNameSuffix>
+                            <systemPropertyVariables>
+                                <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                <forkNumber>0${surefire.forkNumber}</forkNumber>
+                            </systemPropertyVariables>
+                            <excludes>
+                                <exclude>**/*ComputerTest.java</exclude>
+                                <exclude>**/*Groovy*Test.java</exclude>
+                                <exclude>**/*PerformanceTest.java</exclude>
+                                <exclude>**/*ProcessPerformanceTest.java</exclude>
+                                <exclude>**/*ProcessTest.java</exclude>
+                                <exclude>**/*StructureTest.java</exclude>
+                            </excludes>
+                            <groups>org.janusgraph.testcategory.StaticTests</groups>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>tinkerpop-test</id>
                         <goals>
                             <goal>test</goal>

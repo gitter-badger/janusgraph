@@ -52,7 +52,6 @@
                                     org.janusgraph.testcategory.BrittleTests,
                                     org.janusgraph.testcategory.MemoryTests,
                                     org.janusgraph.testcategory.PerformanceTests,
-                                    org.janusgraph.testcategory.SerialTests,
                                     org.janusgraph.testcategory.OrderedKeyStoreTests,
                                     org.janusgraph.testcategory.CassandraSSLTests
                                 </excludedGroups>
@@ -84,7 +83,6 @@
                                     org.janusgraph.testcategory.BrittleTests,
                                     org.janusgraph.testcategory.MemoryTests,
                                     org.janusgraph.testcategory.PerformanceTests,
-                                    org.janusgraph.testcategory.SerialTests,
                                     org.janusgraph.testcategory.UnorderedKeyStoreTests,
                                     org.janusgraph.testcategory.CassandraSSLTests
                                 </excludedGroups>
@@ -113,31 +111,6 @@
                                     <exclude>**/*StructureTest.java</exclude>
                                 </excludes>
                                 <groups>org.janusgraph.testcategory.CassandraSSLTests</groups>
-                            </configuration>
-                        </execution>
-                        <execution>
-                            <id>serial-test</id>
-                            <goals>
-                                <goal>test</goal>
-                            </goals>
-                            <configuration>
-                                <skipTests>${test.skip.serial}</skipTests>
-                                <forkCount>2C</forkCount>
-                                <reportNameSuffix>serial</reportNameSuffix>
-                                <systemPropertyVariables>
-                                    <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
-                                    <forkNumber>0${surefire.forkNumber}</forkNumber>
-                                    <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
-                                </systemPropertyVariables>
-                                <excludes>
-                                    <exclude>**/*ComputerTest.java</exclude>
-                                    <exclude>**/*Groovy*Test.java</exclude>
-                                    <exclude>**/*PerformanceTest.java</exclude>
-                                    <exclude>**/*ProcessPerformanceTest.java</exclude>
-                                    <exclude>**/*ProcessTest.java</exclude>
-                                    <exclude>**/*StructureTest.java</exclude>
-                                </excludes>
-                                <groups>org.janusgraph.testcategory.SerialTests</groups>
                             </configuration>
                         </execution>
                         <execution>
@@ -183,7 +156,6 @@
                                     org.janusgraph.testcategory.BrittleTests,
                                     org.janusgraph.testcategory.MemoryTests,
                                     org.janusgraph.testcategory.PerformanceTests,
-                                    org.janusgraph.testcategory.SerialTests,
                                     org.janusgraph.testcategory.OrderedKeyStoreTests,
                                     org.janusgraph.testcategory.CassandraSSLTests
                                 </excludedGroups>

@@ -20,16 +20,18 @@ import com.google.common.collect.Iterables;
 import org.janusgraph.core.util.ReflectiveConfigOptionLoader;
 import org.janusgraph.diskstorage.configuration.backend.CommonsConfiguration;
 import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
+import org.janusgraph.testcategory.StaticTests;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
 /**
  * @author Matthias Broecheler (me@matthiasb.com)
  */
+@Category(StaticTests.class)
 public class ConfigurationTest {
-
 
     @Test
     public void testConfigHierarchy() {
