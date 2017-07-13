@@ -130,7 +130,8 @@
                             <excludedGroups>
                                 org.janusgraph.testcategory.BrittleTests,
                                 org.janusgraph.testcategory.MemoryTests,
-                                org.janusgraph.testcategory.PerformanceTests
+                                org.janusgraph.testcategory.PerformanceTests,
+                                org.janusgraph.testcategory.StaticTests
                             </excludedGroups>
                         </configuration>
                     </execution>
