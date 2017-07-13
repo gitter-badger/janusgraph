@@ -22,12 +22,13 @@ import java.time.Instant;
 import java.util.concurrent.ExecutorService;
 
 import org.janusgraph.diskstorage.util.time.TimestampProviders;
+import org.janusgraph.testcategory.StaticTests;
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
+import org.junit.experimental.categories.Category;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyColumnValueStore;
 import org.janusgraph.diskstorage.keycolumnvalue.StoreTransaction;
 import org.janusgraph.diskstorage.locking.consistentkey.ConsistentKeyLockerSerializer;
@@ -37,6 +38,7 @@ import org.janusgraph.diskstorage.locking.consistentkey.StandardLockCleanerServi
 import org.janusgraph.diskstorage.util.KeyColumn;
 import org.janusgraph.diskstorage.util.StaticArrayBuffer;
 
+@Category(StaticTests.class)
 public class LockCleanerServiceTest {
     private IMocksControl ctrl;
     private IMocksControl relaxedCtrl;;
