@@ -98,4 +98,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
+            </properties>
+        </profile>
+    </profiles>
 </project>

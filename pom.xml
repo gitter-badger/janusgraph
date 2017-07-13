@@ -109,7 +109,8 @@
         <hbase098.version>${hbase098.core.version}-hadoop2</hbase098.version>
         <hbase100.core.version>1.2.4</hbase100.core.version>
         <hbase100.version>${hbase100.core.version}</hbase100.version>
-        <httpcomponents.version>4.4.1</httpcomponents.version>
+        <httpclient.version>4.5.2</httpclient.version>
+        <httpcore.version>4.4.5</httpcore.version>
         <jackson1.version>1.9.2</jackson1.version>
         <jackson2.version>2.6.6</jackson2.version>
         <jamm.version>0.3.0</jamm.version>
@@ -136,15 +137,15 @@
         <module>janusgraph-test</module>
         <module>janusgraph-berkeleyje</module>
         <module>janusgraph-cassandra-parent</module>
-<!--         <module>janusgraph-hadoop-parent</module> -->
-<!--         <module>janusgraph-hbase-parent</module> -->
-<!--         <module>janusgraph-es</module> -->
-<!--         <module>janusgraph-lucene</module> -->
-<!--         <module>janusgraph-solr</module> -->
-<!--         <module>janusgraph-codepipelines-ci</module> -->
-<!--         <module>janusgraph-dist</module> -->
-<!--         <module>janusgraph-doc</module> -->
-<!--         <module>janusgraph-all</module> -->
+        <module>janusgraph-hadoop-parent</module>
+        <module>janusgraph-hbase-parent</module>
+        <module>janusgraph-es</module>
+        <module>janusgraph-lucene</module>
+        <module>janusgraph-solr</module>
+        <module>janusgraph-codepipelines-ci</module>
+        <module>janusgraph-dist</module>
+        <module>janusgraph-doc</module>
+        <module>janusgraph-all</module>
     </modules>
 
     <repositories>
@@ -253,19 +254,9 @@
                 <version>1.2.3</version>
             </dependency>
             <dependency>
-                <groupId>com.carrotsearch</groupId>
-                <artifactId>junit-benchmarks</artifactId>
-                <version>0.7.0</version>
-            </dependency>
-            <dependency>
                 <groupId>com.carrotsearch.randomizedtesting</groupId>
                 <artifactId>randomizedtesting-runner</artifactId>
                 <version>2.0.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.clearspring.analytics</groupId>
-                <artifactId>stream</artifactId>
-                <version>2.7.0</version>
             </dependency>
             <dependency>
                 <groupId>com.codahale.metrics</groupId>
@@ -343,11 +334,6 @@
                 <version>2.5.0</version>
             </dependency>
             <dependency>
-                <groupId>com.ning</groupId>
-                <artifactId>compress-lzf</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sleepycat</groupId>
                 <artifactId>je</artifactId>
                 <version>7.3.7</version>
@@ -393,19 +379,9 @@
                 <version>1.13</version>
             </dependency>
             <dependency>
-                <groupId>com.yammer.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${metrics2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-cli</groupId>
-                <artifactId>commons-cli</artifactId>
-                <version>1.3.1</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.7</version>
+                <version>1.10</version>
             </dependency>
             <dependency>
                 <groupId>commons-collections</groupId>
@@ -420,7 +396,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.3</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-net</groupId>
@@ -448,11 +424,6 @@
                 <version>2.6</version>
             </dependency>
             <dependency>
-                <groupId>commons-logging</groupId>
-                <artifactId>commons-logging</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-            <dependency>
                 <groupId>it.unimi.dsi</groupId>
                 <artifactId>fastutil</artifactId>
                 <version>6.5.7</version>
@@ -461,11 +432,6 @@
                 <groupId>io.netty</groupId>
                 <artifactId>netty</artifactId>
                 <version>3.10.5.Final</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>4.0.28.Final</version>
             </dependency>
             <dependency>
                 <groupId>io.vavr</groupId>
@@ -486,11 +452,6 @@
                 <groupId>jdk.tools</groupId>
                 <artifactId>jdk.tools</artifactId>
                 <version>1.8</version>
-            </dependency>
-            <dependency>
-                <groupId>jline</groupId>
-                <artifactId>jline</artifactId>
-                <version>2.11</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -550,17 +511,12 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>${httpcomponents.version}</version>
+                <version>${httpclient.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpcore</artifactId>
-                <version>${httpcomponents.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.thrift</groupId>
-                <artifactId>libthrift</artifactId>
-                <version>0.9.0</version>
+                <version>${httpcore.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.tinkerpop</groupId>
@@ -604,17 +560,7 @@
             </dependency>
             <dependency>
                 <groupId>org.antlr</groupId>
-                <artifactId>antlr</artifactId>
-                <version>${antlr.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
                 <artifactId>antlr-master</artifactId>
-                <version>${antlr.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr-runtime</artifactId>
                 <version>${antlr.version}</version>
             </dependency>
             <dependency>
@@ -664,11 +610,6 @@
                 <version>0.6.2.201302030002</version>
             </dependency>
             <dependency>
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>3.18.0-GA</version>
-            </dependency>
-            <dependency>
                 <groupId>org.jboss.logging</groupId>
                 <artifactId>jboss-logging</artifactId>
                 <version>3.1.2.GA</version>
@@ -682,11 +623,6 @@
                 <groupId>org.locationtech.spatial4j</groupId>
                 <artifactId>spatial4j</artifactId>
                 <version>0.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mindrot</groupId>
-                <artifactId>jbcrypt</artifactId>
-                <version>0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.mortbay.jetty</groupId>
@@ -741,7 +677,7 @@
             <dependency>
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
-                <version>2.1</version>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <groupId>org.reflections</groupId>
@@ -769,14 +705,9 @@
                 <version>${slf4j.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.xerial.snappy</groupId>
-                <artifactId>snappy-java</artifactId>
-                <version>1.0.5-M3</version>
-            </dependency>
-            <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.11</version>
+                <version>1.15</version>
             </dependency>
             <dependency>
                 <groupId>tomcat</groupId>
@@ -787,11 +718,6 @@
                 <groupId>tomcat</groupId>
                 <artifactId>jasper-compiler</artifactId>
                 <version>${jasper.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xml-apis</groupId>
-                <artifactId>xml-apis</artifactId>
-                <version>1.3.04</version>
             </dependency>
 
             <!-- Test Dependencies -->
@@ -819,13 +745,14 @@
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>enforce-dependency-convergence</id>
+                        <id>enforce-dependency-versions</id>
                         <goals>
                             <goal>enforce</goal>
                         </goals>
                         <configuration>
                             <rules>
                                 <DependencyConvergence />
+                                <requireUpperBoundDeps />
                             </rules>
                         </configuration>
                     </execution>

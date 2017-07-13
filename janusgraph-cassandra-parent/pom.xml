@@ -20,6 +20,26 @@
         <module>janusgraph-cassandra-thrift</module>
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>jline</groupId>
+                <artifactId>jline</artifactId>
+                <version>2.12</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.thrift</groupId>
+                <artifactId>libthrift</artifactId>
+                <version>0.9.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mindrot</groupId>
+                <artifactId>jbcrypt</artifactId>
+                <version>0.4</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -32,7 +52,6 @@
                                 <goal>test</goal>
                             </goals>
                             <configuration>
-                                <skipTests>${test.skip.unordered}</skipTests>
                                 <forkCount>2C</forkCount>
                                 <reportNameSuffix>unordered</reportNameSuffix>
                                 <systemPropertyVariables>
@@ -213,5 +232,22 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.unordered>true</test.skip.unordered>
+                <test.skip.ordered>true</test.skip.ordered>
+                <test.skip.ssl>true</test.skip.ssl>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
+            </properties>
+        </profile>
+    </profiles>
 </project>
 
