@@ -21,18 +21,11 @@
     </modules>
 
     <properties>
-        <astyanax.version>3.8.0</astyanax.version>
-        <cassandra.version>2.2.10</cassandra.version>
-        <cassandra-driver.version>3.1.4</cassandra-driver.version>
+        <cassandra.version>2.1.18</cassandra.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
-                <version>${cassandra-driver.version}</version>
-            </dependency>
             <dependency>
                 <groupId>jline</groupId>
                 <artifactId>jline</artifactId>

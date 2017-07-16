@@ -118,8 +118,7 @@
         <junit.version>4.12</junit.version>
         <kuali.s3.wagon.version>1.1.20</kuali.s3.wagon.version>
         <lucene-solr.version>6.6.0</lucene-solr.version>
-        <metrics2.version>2.1.2</metrics2.version>
-        <metrics3.version>3.0.1</metrics3.version>
+        <metrics.version>3.1.0</metrics.version>
         <mrunit.version>1.1.0</mrunit.version>
         <scylladb.version>1.7.1</scylladb.version>
         <sesame.version>2.7.10</sesame.version>
@@ -254,21 +253,6 @@
                 <groupId>com.carrotsearch.randomizedtesting</groupId>
                 <artifactId>randomizedtesting-runner</artifactId>
                 <version>2.0.8</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codahale.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>${metrics3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codahale.metrics</groupId>
-                <artifactId>metrics-ganglia</artifactId>
-                <version>${metrics3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codahale.metrics</groupId>
-                <artifactId>metrics-graphite</artifactId>
-                <version>${metrics3.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -416,9 +400,24 @@
                 <version>2.6</version>
             </dependency>
             <dependency>
-                <groupId>it.unimi.dsi</groupId>
-                <artifactId>fastutil</artifactId>
-                <version>6.5.7</version>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-core</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-ganglia</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-graphite</artifactId>
+                <version>${metrics.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jvm</artifactId>
+                <version>${metrics.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>
@@ -429,6 +428,11 @@
                 <groupId>io.vavr</groupId>
                 <artifactId>vavr</artifactId>
                 <version>${vavr.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>it.unimi.dsi</groupId>
+                <artifactId>fastutil</artifactId>
+                <version>6.5.7</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>

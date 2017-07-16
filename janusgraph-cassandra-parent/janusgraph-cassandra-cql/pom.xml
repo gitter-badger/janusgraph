@@ -10,6 +10,10 @@
     <artifactId>janusgraph-cassandra-cql</artifactId>
     <name>JanusGraph-Cassandra: CQL Module</name>
 
+    <properties>
+        <cassandra-driver.version>3.1.4</cassandra-driver.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.janusgraph</groupId>
@@ -41,9 +45,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-core</artifactId>
-                <version>3.1.2</version>
+                <groupId>com.datastax.cassandra</groupId>
+                <artifactId>cassandra-driver-core</artifactId>
+                <version>${cassandra-driver.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.netty</groupId>

@@ -35,9 +35,6 @@ import org.apache.cassandra.db.composites.Composite;
 import org.apache.cassandra.db.filter.IDiskAtomFilter;
 import org.apache.cassandra.db.filter.SliceQueryFilter;
 import org.apache.cassandra.dht.*;
-import org.apache.cassandra.dht.ByteOrderedPartitioner.BytesToken;
-import org.apache.cassandra.dht.Murmur3Partitioner.LongToken;
-import org.apache.cassandra.dht.RandomPartitioner.BigIntegerToken;
 import org.apache.cassandra.exceptions.InvalidRequestException;
 import org.apache.cassandra.exceptions.IsBootstrappingException;
 import org.apache.cassandra.exceptions.RequestTimeoutException;
@@ -136,8 +133,8 @@ public class CassandraEmbeddedKeyColumnValueStore implements KeyColumnValueStore
         /* Note: we need to fetch columns for each row as well to remove "range ghosts" */
         SlicePredicate predicate = new SlicePredicate().setSlice_range(columnSlice);
 
-        RowPosition startPosition = start.minKeyBound();
-        RowPosition endPosition = end.minKeyBound();
+        RowPosition startPosition = start.minKeyBound(partitioner);
+        RowPosition endPosition = end.minKeyBound(partitioner);
 
         List<Row> rows;
 

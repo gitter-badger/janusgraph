@@ -14,7 +14,7 @@
 
 package org.janusgraph.diskstorage.cassandra.embedded;
 
-import org.apache.cassandra.dht.ByteOrderedPartitioner.BytesToken;
+import org.apache.cassandra.dht.BytesToken;
 import org.janusgraph.diskstorage.keycolumnvalue.KeyRange;
 import org.junit.Assert;
 import org.junit.Test;

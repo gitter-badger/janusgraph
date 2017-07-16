@@ -11,18 +11,18 @@
 
     <properties>
         <javadoc.skip>true</javadoc.skip>
-        
+
         <janusgraph.compatible.versions />
         <titan.compatible-versions>1.0.0,1.1.0-SNAPSHOT</titan.compatible-versions>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-ganglia</artifactId>
             <exclusions>
                 <!-- LGPL licensed - users will need to install this jar manually -->
@@ -33,7 +33,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
         </dependency>
         <dependency>
@@ -89,7 +89,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.noggit</groupId>
             <artifactId>noggit</artifactId>

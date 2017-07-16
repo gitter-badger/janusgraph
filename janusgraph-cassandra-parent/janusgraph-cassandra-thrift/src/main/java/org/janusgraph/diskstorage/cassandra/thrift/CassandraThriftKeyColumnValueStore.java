@@ -27,7 +27,6 @@ import org.janusgraph.diskstorage.cassandra.utils.CassandraHelper;
 import org.janusgraph.diskstorage.keycolumnvalue.*;
 import org.janusgraph.diskstorage.util.*;
 import org.apache.cassandra.dht.*;
-import org.apache.cassandra.dht.ByteOrderedPartitioner.BytesToken;
 import org.apache.cassandra.thrift.*;
 import org.apache.cassandra.thrift.ConsistencyLevel;
 import org.apache.commons.lang.ArrayUtils;
@@ -233,7 +232,7 @@ public class CassandraThriftKeyColumnValueStore implements KeyColumnValueStore {
         final IPartitioner partitioner = storeManager.getCassandraPartitioner();
 
         // see rant about the reason of this limitation in Astyanax implementation of this method.
-        if (!(partitioner instanceof ByteOrderedPartitioner))
+        if (!(partitioner instanceof AbstractByteOrderedPartitioner))
             throw new PermanentBackendException("This operation is only allowed when byte-ordered partitioner is used.");
 
         try {
@@ -538,7 +537,7 @@ public class CassandraThriftKeyColumnValueStore implements KeyColumnValueStore {
                 int pageSize, ByteBuffer startKey, ByteBuffer endKey) throws BackendException {
             super(partitioner, columnSlice, pageSize, partitioner.getToken(startKey), partitioner.getToken(endKey), true);
 
-            Preconditions.checkArgument(partitioner instanceof ByteOrderedPartitioner);
+            Preconditions.checkArgument(partitioner instanceof AbstractByteOrderedPartitioner);
 
             // Get first slice with key range instead of token range. Token
             // ranges are start-exclusive, key ranges are start-inclusive. Both
