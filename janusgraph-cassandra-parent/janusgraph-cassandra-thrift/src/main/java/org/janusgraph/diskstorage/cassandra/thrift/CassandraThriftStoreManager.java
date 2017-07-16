@@ -35,7 +35,6 @@ import org.janusgraph.diskstorage.keycolumnvalue.KeyRange;
 import org.janusgraph.graphdb.configuration.PreInitializeConfigOptions;
 import org.janusgraph.util.system.NetworkUtil;
 
-import org.apache.cassandra.dht.AbstractByteOrderedPartitioner;
 import org.apache.cassandra.dht.ByteOrderedPartitioner;
 import org.apache.cassandra.dht.IPartitioner;
 import org.apache.cassandra.dht.Token;
@@ -358,7 +357,7 @@ public class CassandraThriftStoreManager extends AbstractCassandraStoreManager {
         CTConnection conn = null;
         IPartitioner partitioner = getCassandraPartitioner();
 
-        if (!(partitioner instanceof AbstractByteOrderedPartitioner))
+        if (!(partitioner instanceof ByteOrderedPartitioner))
             throw new UnsupportedOperationException("getLocalKeyPartition() only supported by byte ordered partitioner.");
 
         Token.TokenFactory tokenFactory = partitioner.getTokenFactory();

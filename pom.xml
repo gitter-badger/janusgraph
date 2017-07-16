@@ -96,9 +96,6 @@
         <antlr2.version>2.7.7</antlr2.version>
         <asm3.version>3.1</asm3.version>
         <asm4.version>4.0</asm4.version>
-        <astyanax.version>3.8.0</astyanax.version>
-        <cassandra.version>2.1.9</cassandra.version>
-        <cassandra-driver.version>3.1.4</cassandra-driver.version>
         <commons.beanutils.version>1.7.0</commons.beanutils.version>
         <commons.collections.version>3.2.2</commons.collections.version>
         <concurrentlinkedhashmap.version>1.3</concurrentlinkedhashmap.version>
@@ -272,11 +269,6 @@
                 <groupId>com.codahale.metrics</groupId>
                 <artifactId>metrics-graphite</artifactId>
                 <version>${metrics3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.datastax.cassandra</groupId>
-                <artifactId>cassandra-driver-core</artifactId>
-                <version>${cassandra-driver.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -477,16 +469,6 @@
                 <groupId>org.apache.avro</groupId>
                 <artifactId>avro</artifactId>
                 <version>1.7.4</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cassandra</groupId>
-                <artifactId>cassandra-all</artifactId>
-                <version>${cassandra.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.cassandra</groupId>
-                <artifactId>cassandra-thrift</artifactId>
-                <version>${cassandra.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

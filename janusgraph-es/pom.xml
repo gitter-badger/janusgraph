@@ -1,27 +1,34 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.janusgraph</groupId>
         <artifactId>janusgraph</artifactId>
         <version>0.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>janusgraph-es</artifactId>
-    <name>JanusGraph-ElasticSearch: Distributed Indexing Support</name>
-    <url>http://janusgraph.org</url>
+    <name>JanusGraph-Elasticsearch: Distributed Indexing Support</name>
+
     <properties>
-        <top.level.basedir>${basedir}/..</top.level.basedir>
         <elasticsearch.test.version>${elasticsearch.version}</elasticsearch.test.version>
         <!-- Groovy dynamic scripting must be enabled when testing on ES 1.x/2.x servers.
-             From ES 5.0 Painless inline scripts are used which are enabled by default. -->
+            From ES 5.0 Painless inline scripts are used which are enabled by default. -->
         <elasticsearch.test.groovy.inline>false</elasticsearch.test.groovy.inline>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.elasticsearch.client</groupId>
+            <artifactId>rest</artifactId>
+            <version>${elasticsearch.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.janusgraph</groupId>
             <artifactId>janusgraph-test</artifactId>
@@ -54,11 +61,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>rest</artifactId>
-            <version>${elasticsearch.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.elasticsearch.distribution.zip</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>${elasticsearch.test.version}</version>
@@ -75,49 +77,67 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr-runtime</artifactId>
-            <version>${antlr.version}</version>
-        </dependency>
-
-        <!-- Logging backends.
-             Enforce a classpath ordering constraint to ensure log4j is used for logging.
-             See comment in janusgraph-cassandra POM for more information. -->
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <!-- End logging backends. -->
     </dependencies>
-    <build>
-        <resources>
-            <resource>
-                <directory>${basedir}/src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
 
+    <build>
         <testResources>
             <testResource>
                 <directory>${basedir}/src/test/resources</directory>
                 <filtering>true</filtering>
             </testResource>
         </testResources>
-
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>clean-es-files</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                        <configuration>
+                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                            <filesets>
+                                <fileset>
+                                    <directory>bin/</directory>
+                                </fileset>
+                                <fileset>
+                                    <directory>config/</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Unpack Elasticsearch distribution for testing. -->
+                    <execution>
+                        <id>unpack-plugins</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-test-resources</phase>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <includeGroupIds>org.elasticsearch.distribution.zip</includeGroupIds>
+                            <scope>test</scope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>pack-test-jar</id>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
@@ -142,53 +162,8 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <!-- Unpack Elasticsearch distribution for testing. -->
-                    <execution>
-                        <id>unpack-plugins</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <phase>generate-test-resources</phase>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <includeGroupIds>org.elasticsearch.distribution.zip</includeGroupIds>
-                            <scope>test</scope>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>clean-es-files</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>clean</goal>
-                        </goals>
-                        <configuration>
-                            <excludeDefaultDirectories>true</excludeDefaultDirectories>
-                            <filesets>
-                                <fileset>
-                                    <directory>bin/</directory>
-                                </fileset>
-                                <fileset>
-                                    <directory>config/</directory>
-                                </fileset>
-                            </filesets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-
                 <executions>
                     <execution>
                         <id>default-test</id>
@@ -196,34 +171,6 @@
                             <argLine>${default.test.jvm.opts} -Dtest.cassandra.confdir=${project.build.directory}/cassandra/conf/localhost-murmur -Dtest.cassandra.datadir=${project.build.directory}/cassandra/data/localhost-murmur</argLine>
                         </configuration>
                     </execution>
-
-                    <!--
-                    <execution>
-                        <id>es-cassandra-test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <argLine>-Dtest.cassandra.confdir=${project.build.directory}/cassandra/conf/localhost-murmur -Dtest.cassandra.datadir=${project.build.directory}/cassandra/data/localhost-murmur</argLine>
-                            <includes>
-                                <include>**/ThriftElasticsearchTest.java</include>
-                            </includes>
-                            <reuseForks>false</reuseForks>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>default-test</id>
-                        <goals>
-                            <goal>test</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/ThriftElasticsearchTest.java</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                    -->
                 </executions>
             </plugin>
         </plugins>
@@ -236,19 +183,6 @@
                 <elasticsearch.test.version>2.4.4</elasticsearch.test.version>
                 <elasticsearch.test.groovy.inline>true</elasticsearch.test.groovy.inline>
             </properties>
-        </profile>
-
-        <!-- Redeclare gpg-plugin at the bottom to ensure it runs after all the other packaging goals -->
-        <profile>
-            <id>janusgraph-release</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

@@ -188,6 +188,7 @@
             </activation>
             <properties>
                 <test.skip.static>true</test.skip.static>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
             </properties>
         </profile>
     </profiles>
