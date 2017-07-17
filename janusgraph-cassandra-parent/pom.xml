@@ -22,6 +22,8 @@
 
     <properties>
         <cassandra.version>2.1.18</cassandra.version>
+
+        <test.cassandra.forkcount>1C</test.cassandra.forkcount>
     </properties>
 
     <dependencyManagement>
@@ -71,7 +73,7 @@
                                 <goal>test</goal>
                             </goals>
                             <configuration>
-                                <forkCount>2C</forkCount>
+                                <forkCount>${test.cassandra.forkcount}</forkCount>
                                 <reportNameSuffix>unordered</reportNameSuffix>
                                 <systemPropertyVariables>
                                     <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
