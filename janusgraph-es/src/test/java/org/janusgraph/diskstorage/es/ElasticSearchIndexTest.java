@@ -36,6 +36,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -56,7 +57,7 @@ public class ElasticSearchIndexTest extends IndexProviderTest {
     private static ElasticsearchRunner esr;
 
     @BeforeClass
-    public static void startElasticsearch() {
+    public static void startElasticsearch() throws IOException {
         if (!ElasticsearchRunner.IS_EXTERNAL) {
             esr = new ElasticsearchRunner();
             esr.start();

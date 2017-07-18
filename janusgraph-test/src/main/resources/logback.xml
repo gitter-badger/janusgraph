@@ -1,7 +1,7 @@
 <configuration>
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator" />
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>test.log</file>
+        <file>target/test.log</file>
         <append>true</append>
         <encoder>
             <pattern>%d [%-5level] %-30.30t | %40.40logger{40} : %msg%n</pattern>

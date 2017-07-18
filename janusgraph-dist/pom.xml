@@ -122,26 +122,26 @@
             <classifier>tests</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.distribution.zip</groupId>
-            <artifactId>elasticsearch</artifactId>
-            <version>${elasticsearch.version}</version>
-            <type>zip</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.elasticsearch</groupId>
-                    <artifactId>elasticsearch</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.java.dev.jna</groupId>
-                    <artifactId>jna</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+<!--         <dependency> -->
+<!--             <groupId>org.elasticsearch.distribution.zip</groupId> -->
+<!--             <artifactId>elasticsearch</artifactId> -->
+<!--             <version>${elasticsearch.version}</version> -->
+<!--             <type>zip</type> -->
+<!--             <exclusions> -->
+<!--                 <exclusion> -->
+<!--                     <groupId>*</groupId> -->
+<!--                     <artifactId>*</artifactId> -->
+<!--                 </exclusion> -->
+<!--                 <exclusion> -->
+<!--                     <groupId>org.elasticsearch</groupId> -->
+<!--                     <artifactId>elasticsearch</artifactId> -->
+<!--                 </exclusion> -->
+<!--                 <exclusion> -->
+<!--                     <groupId>net.java.dev.jna</groupId> -->
+<!--                     <artifactId>jna</artifactId> -->
+<!--                 </exclusion> -->
+<!--             </exclusions> -->
+<!--         </dependency> -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>janusgraph-solr</artifactId>

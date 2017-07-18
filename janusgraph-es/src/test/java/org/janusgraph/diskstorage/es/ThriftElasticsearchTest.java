@@ -18,6 +18,8 @@ package org.janusgraph.diskstorage.es;
 import static org.janusgraph.diskstorage.es.ElasticSearchIndex.*;
 import static org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration.INDEX_HOSTS;
 
+import java.io.IOException;
+
 import org.janusgraph.diskstorage.StandardStoreManager;
 import org.janusgraph.diskstorage.cassandra.CassandraGraphConfiguration;
 import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
@@ -32,7 +34,7 @@ public class ThriftElasticsearchTest extends JanusGraphIndexTest {
     private static ElasticsearchRunner esr;
 
     @BeforeClass
-    public static void startElasticsearch() {
+    public static void startElasticsearch() throws IOException {
         CassandraInitialiser.initialiseCassandra(ThriftElasticsearchTest.class);
         if (!ElasticsearchRunner.IS_EXTERNAL) {
             esr = new ElasticsearchRunner();

@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.janusgraph.BerkeleyStorageSetup.getBerkeleyJEConfiguration;
 import static org.janusgraph.diskstorage.es.ElasticSearchIndex.BULK_REFRESH;
@@ -40,7 +41,7 @@ public class BerkeleyElasticsearchTest extends JanusGraphIndexTest {
     private static ElasticsearchRunner esr;
 
     @BeforeClass
-    public static void startElasticsearch() {
+    public static void startElasticsearch() throws IOException {
         if (!ElasticsearchRunner.IS_EXTERNAL) {
             esr = new ElasticsearchRunner();
             esr.start();
