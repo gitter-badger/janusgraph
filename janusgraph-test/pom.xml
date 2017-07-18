@@ -115,6 +115,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <skipTests>${test.skip.main}</skipTests>
                             <forkCount>2C</forkCount>
                             <systemPropertyVariables>
                                 <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
@@ -191,6 +192,20 @@
                 </property>
             </activation>
             <properties>
+                <test.skip.main>true</test.skip.main>
+                <test.skip.static>true</test.skip.static>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTestsCore</id>
+            <activation>
+                <property>
+                    <name>test.skip.core</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.main>true</test.skip.main>
                 <test.skip.static>true</test.skip.static>
                 <test.skip.tinkerpop>true</test.skip.tinkerpop>
             </properties>

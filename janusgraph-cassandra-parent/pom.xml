@@ -22,8 +22,6 @@
 
     <properties>
         <cassandra.version>2.1.18</cassandra.version>
-
-        <test.cassandra.forkcount>1C</test.cassandra.forkcount>
     </properties>
 
     <dependencyManagement>
@@ -68,7 +66,8 @@
                                 <goal>test</goal>
                             </goals>
                             <configuration>
-                                <forkCount>${test.cassandra.forkcount}</forkCount>
+                                <skipTests>${test.skip.unordered}</skipTests>
+                                <forkCount>2C</forkCount>
                                 <reportNameSuffix>unordered</reportNameSuffix>
                                 <systemPropertyVariables>
                                     <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
@@ -255,6 +254,20 @@
             <activation>
                 <property>
                     <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.unordered>true</test.skip.unordered>
+                <test.skip.ordered>true</test.skip.ordered>
+                <test.skip.ssl>true</test.skip.ssl>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTestsCassandra</id>
+            <activation>
+                <property>
+                    <name>test.skip.cassandra</name>
                 </property>
             </activation>
             <properties>

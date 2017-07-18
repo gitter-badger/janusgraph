@@ -58,6 +58,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
+                            <skipTests>${test.skip.main}</skipTests>
                             <forkCount>2C</forkCount>
                             <systemPropertyVariables>
                                 <janusgraph.testdir>${project.build.directory}/db/${surefire.forkNumber}</janusgraph.testdir>
@@ -108,6 +109,19 @@
                 </property>
             </activation>
             <properties>
+                <test.skip.main>true</test.skip.main>
+                <test.skip.tinkerpop>true</test.skip.tinkerpop>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTestsBerkeleyJE</id>
+            <activation>
+                <property>
+                    <name>test.skip.berkeleyje</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.main>true</test.skip.main>
                 <test.skip.tinkerpop>true</test.skip.tinkerpop>
             </properties>
         </profile>

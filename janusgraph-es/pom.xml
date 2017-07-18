@@ -115,17 +115,46 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
-                        <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
-                    </systemPropertyVariables>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-test</id>
+                        <configuration>
+                            <skipTests>${test.skip.main}</skipTests>
+                            <systemPropertyVariables>
+                                <java.util.logging.config.class>org.janusgraph.testutil.JULConfigurator</java.util.logging.config.class>
+                                <CASSANDRA_CONFIG>UNORDERED</CASSANDRA_CONFIG>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>skipTests</id>
+            <activation>
+                <property>
+                    <name>skipTests</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.main>true</test.skip.main>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipTestsES</id>
+            <activation>
+                <property>
+                    <name>test.skip.es</name>
+                </property>
+            </activation>
+            <properties>
+                <test.skip.main>true</test.skip.main>
+            </properties>
+        </profile>
+
         <profile>
             <id>elasticsearch2</id>
             <properties>
