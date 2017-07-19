@@ -73,6 +73,24 @@
         <tag>HEAD</tag>
     </scm>
 
+
+    <modules>
+        <module>janusgraph-core</module>
+        <module>janusgraph-test</module>
+        <module>janusgraph-berkeleyje</module>
+        <module>janusgraph-cassandra-parent</module>
+        <module>janusgraph-es</module>
+        <module>janusgraph-lucene</module>
+        <module>janusgraph-solr</module>
+        <module>janusgraph-hbase-parent</module>
+
+        <!-- <module>janusgraph-hadoop-parent</module> -->
+        <!-- <module>janusgraph-codepipelines-ci</module> -->
+        <!-- <module>janusgraph-dist</module> -->
+        <!-- <module>janusgraph-doc</module> -->
+        <!-- <module>janusgraph-all</module> -->
+    </modules>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -126,23 +144,6 @@
         <vavr.version>0.9.0</vavr.version>
         <zookeeper.version>3.4.6</zookeeper.version>
     </properties>
-
-    <modules>
-        <module>janusgraph-core</module>
-        <module>janusgraph-test</module>
-        <module>janusgraph-berkeleyje</module>
-        <module>janusgraph-cassandra-parent</module>
-        <module>janusgraph-es</module>
-        <module>janusgraph-lucene</module>
-        <module>janusgraph-solr</module>
-        <module>janusgraph-hbase-parent</module>
-
-<!--         <module>janusgraph-hadoop-parent</module> -->
-        <!-- <module>janusgraph-codepipelines-ci</module> -->
-        <!-- <module>janusgraph-dist</module> -->
-        <!-- <module>janusgraph-doc</module> -->
-        <!-- <module>janusgraph-all</module> -->
-    </modules>
 
     <repositories>
         <repository>
