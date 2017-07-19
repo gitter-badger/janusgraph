@@ -16,14 +16,10 @@ package org.janusgraph.diskstorage.hbase;
 
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.apache.log4j.Appender;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PatternLayout;
-import org.apache.log4j.WriterAppender;
 import org.janusgraph.HBaseStorageSetup;
 import org.janusgraph.diskstorage.BackendException;
 import org.janusgraph.diskstorage.configuration.BasicConfiguration;
@@ -34,6 +30,15 @@ import org.janusgraph.graphdb.configuration.GraphDatabaseConfiguration;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Charsets;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.OutputStreamAppender;
 
 public class HBaseStoreManagerConfigTest {
 
@@ -50,17 +55,24 @@ public class HBaseStoreManagerConfigTest {
 
     @Test
     public void testShortCfNames() throws Exception {
-        Logger log = Logger.getLogger(HBaseStoreManager.class);
+        Logger log = (Logger) LoggerFactory.getLogger(HBaseStoreManager.class);
         Level savedLevel = log.getLevel();
         log.setLevel(Level.WARN);
-        StringWriter writer = new StringWriter();
-        Appender appender = new WriterAppender(new PatternLayout("%p: %m%n"), writer);
-        log.addAppender(appender);
+
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        final OutputStreamAppender<ILoggingEvent> outputStreamAppender = new OutputStreamAppender<ILoggingEvent>();
+        outputStreamAppender.setOutputStream(outputStream);
+
+        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("%p: %m%n");
+        outputStreamAppender.setEncoder(encoder);
+
+        log.addAppender(outputStreamAppender);
 
         // Open the HBaseStoreManager and store with default SHORT_CF_NAMES true.
         WriteConfiguration config = HBaseStorageSetup.getHBaseGraphConfiguration();
-        HBaseStoreManager manager = new HBaseStoreManager(new BasicConfiguration(GraphDatabaseConfiguration.ROOT_NS,
-            config, BasicConfiguration.Restriction.NONE));
+        HBaseStoreManager manager = new HBaseStoreManager(new BasicConfiguration(GraphDatabaseConfiguration.ROOT_NS, config, BasicConfiguration.Restriction.NONE));
         KeyColumnValueStore store = manager.openDatabase(GraphDatabaseConfiguration.SYSTEM_PROPERTIES_STORE_NAME);
 
         store.close();
@@ -68,14 +80,16 @@ public class HBaseStoreManagerConfigTest {
 
         // Open the HBaseStoreManager and store with SHORT_CF_NAMES false.
         config.set(ConfigElement.getPath(HBaseStoreManager.SHORT_CF_NAMES), false);
-        manager = new HBaseStoreManager(new BasicConfiguration(GraphDatabaseConfiguration.ROOT_NS,
-            config, BasicConfiguration.Restriction.NONE));
-        writer.getBuffer().setLength(0);
+        manager = new HBaseStoreManager(new BasicConfiguration(GraphDatabaseConfiguration.ROOT_NS, config, BasicConfiguration.Restriction.NONE));
+
+        outputStream.reset();
         store = manager.openDatabase(GraphDatabaseConfiguration.SYSTEM_PROPERTIES_STORE_NAME);
 
         // Verify we get WARN.
-        assertTrue(writer.toString(), writer.toString().startsWith("WARN: Configuration"));
-        log.removeAppender(appender);
+        String message = new String(outputStream.toByteArray(), Charsets.UTF_8);
+
+        assertTrue(message, message.toString().startsWith("WARN: Configuration"));
+        log.detachAppender(outputStreamAppender);
         log.setLevel(savedLevel);
 
         store.close();
