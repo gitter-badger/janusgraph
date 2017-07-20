@@ -14,6 +14,8 @@
 
 package org.janusgraph.pkgtest;
 
+import java.io.IOException;
+
 import org.janusgraph.diskstorage.cassandra.CassandraInitialiser;
 import org.janusgraph.diskstorage.es.ElasticsearchRunner;
 import org.junit.AfterClass;
@@ -30,7 +32,7 @@ public class CassandraThriftESAssemblyIT extends AbstractJanusGraphAssemblyIT {
     }
 
     @BeforeClass
-    public static void startES() {
+    public static void startES() throws IOException {
         new ElasticsearchRunner(ES_HOME).start();
     }
 
@@ -40,7 +42,7 @@ public class CassandraThriftESAssemblyIT extends AbstractJanusGraphAssemblyIT {
     }
 
     @AfterClass
-    public static void stopES() {
+    public static void stopES() throws IOException {
         new ElasticsearchRunner(ES_HOME).stop();
     }
 }

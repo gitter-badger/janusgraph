@@ -1,28 +1,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.janusgraph</groupId>
         <artifactId>janusgraph</artifactId>
         <version>0.2.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
+
     <artifactId>janusgraph-hadoop-parent</artifactId>
     <name>JanusGraph-Hadoop: Parent Module</name>
     <packaging>pom</packaging>
-    <url>http://janusgraph.org</url>
-
-    <properties>
-        <top.level.basedir>${project.parent.basedir}</top.level.basedir>
-        <skipCassandra>${skipTests}</skipCassandra>
-        <skipHBase>${skipTests}</skipHBase>
-        <skipPipeline>${skipTests}</skipPipeline>
-    </properties>
 
     <modules>
         <module>janusgraph-hadoop-core</module>
         <module>janusgraph-hadoop-2</module>
         <module>janusgraph-hadoop</module>
     </modules>
+    
+    <properties>
+        <top.level.basedir>${project.parent.basedir}</top.level.basedir>
+        <skipCassandra>${skipTests}</skipCassandra>
+        <skipHBase>${skipTests}</skipHBase>
+        <skipPipeline>${skipTests}</skipPipeline>
+    </properties>
 
     <developers>
         <developer>
@@ -85,6 +85,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala_2.10</artifactId>
+            <version>2.6.6</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
