@@ -27,6 +27,8 @@ can support thousands of concurrent users, complex traversals, and analytic grap
 
 ## Learn More
 
+[![Join the chat at https://gitter.im/janusgraph-build-discuss/Lobby](https://badges.gitter.im/janusgraph-build-discuss/Lobby.svg)](https://gitter.im/janusgraph-build-discuss/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 The [project homepage](http://janusgraph.org) contains more information on JanusGraph and
 provides links to documentation, getting-started guides and release downloads.
 
